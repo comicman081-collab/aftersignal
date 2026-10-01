@@ -51,8 +51,10 @@
     Object.freeze({id:"dust_credits",name:"크레딧",unit:2000,cost:10,grant:Object.freeze({credits:2000})})
   ]);
   // Prologue story guest squad (NOT owned): who each prologue stage lends the player. Cumulative by stage number,
-  // mirroring the original stage unlock lists (the MODULAR_BAKE_V1 test additions to P-14 are not guests).
-  const PROLOGUE_GUESTS=Object.freeze([["P-01",Object.freeze(["mira"])],["P-06",Object.freeze(["haneul"])],["P-09",Object.freeze(["sera"])],["P-14",Object.freeze(["astra","tessa","naru"])]]);
+  // mirroring the stage unlock lists up to P-09 (the MODULAR_BAKE_V1 test additions to P-14 are not guests). P-14 lends nobody
+  // new (2026-10-01, user: its story has only Mira, Haneul and Sera); its own unlock list still names Astra, Tessa and Naru for
+  // legacy saves, but a party gets them through recruiting only.
+  const PROLOGUE_GUESTS=Object.freeze([["P-01",Object.freeze(["mira"])],["P-06",Object.freeze(["haneul"])],["P-09",Object.freeze(["sera"])]]);
   const PROLOGUE_LAST=14;
 
   const int=value=>{const n=Math.floor(Number(value));return Number.isFinite(n)&&n>0?n:0};

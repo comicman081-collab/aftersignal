@@ -30,8 +30,9 @@
     return Object.freeze({...BASE,chapters,stages,enemies,actors,bgmTracks,extensions:ext.map(chunk=>chunk.range||chunk.version||"")});
   })();
   const LAUNCH_KEY="aftersignal:campaign-launch:v1",PROFILE_KEY="aftersignal:profile:v3",FORMATION_KEY="aftersignal:party-loadout:P-99:v1";
-  // Guest squad when the player owns nobody yet (gacha-only ownership; same squad as the P-14 story guests). Claude's decision.
-  const GUEST_SQUAD=Object.freeze(["mira","haneul","sera","tessa","naru"]);
+  // Guest squad when the player owns nobody yet (gacha-only ownership; same squad as the P-14 story guests = the story trio that
+  // CH01-01 casts; 2026-10-01 user: no extra SSRs in a fight whose story does not have them). Claude's decision.
+  const GUEST_SQUAD=Object.freeze(["mira","haneul","sera"]);
   const stages=D.stages,order=stages.map(stage=>stage.id),byId=new Map(stages.map(stage=>[stage.id,stage])),chapters=new Map(D.chapters.map(chapter=>[chapter.id,chapter]));
   const enemies=new Map(D.enemies.map(enemy=>[enemy.id,enemy]));
   const readJson=(key,fallback=null)=>{try{const value=JSON.parse(localStorage.getItem(key)||"null");return value??fallback}catch{return fallback}};

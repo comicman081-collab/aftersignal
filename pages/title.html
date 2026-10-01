@@ -58,6 +58,22 @@
     .start:hover .start-in,.start:focus-visible .start-in{background:linear-gradient(100deg,rgba(14,68,96,.97),rgba(28,112,142,.95) 55%,rgba(14,68,96,.97))}
     .start:focus-visible{background:#fff}
     .start:active{transform:translateY(0);filter:brightness(1.25)}
+    /* armed: a saved game exists, so the first press on 새 작전 시작 only asks for a second one (the second press wipes the save, as before) */
+    .start.armed{background:linear-gradient(100deg,#ffbaa6,#d8573c 42%,#ffdcd2 58%,#e46c4e)}
+    .start.armed .start-in{background:linear-gradient(100deg,rgba(54,14,12,.97),rgba(94,26,22,.95) 55%,rgba(54,14,12,.97));text-shadow:0 0 12px rgba(255,170,140,.7),0 2px 2px #000}
+    .start.armed .start-in:before{border-left-color:#ffb8a2;filter:drop-shadow(0 0 5px rgba(255,160,130,.9))}
+
+    /* continue (2026-10-01): the only way back to a saved game; shown only when one exists (#stage[data-save=on]), same plate family as .start but quieter */
+    .cont{display:none;position:relative;min-width:clamp(260px,23vw,400px);margin:0;padding:2px;border:0;cursor:pointer;color:#e9fdff;text-align:left;font:900 clamp(19px,1.45vw,27px)/1 CombatKR,sans-serif;letter-spacing:.2em;
+      background:linear-gradient(100deg,rgba(138,246,255,.82),rgba(59,169,216,.55) 42%,rgba(211,252,255,.78) 58%,rgba(79,201,233,.55));
+      clip-path:polygon(15px 0,100% 0,100% calc(100% - 15px),calc(100% - 15px) 100%,0 100%,0 15px);transition:filter .16s ease,transform .16s ease}
+    .cont-in{display:flex;flex-direction:column;gap:8px;padding:17px 34px 16px;background:linear-gradient(100deg,rgba(5,24,38,.95),rgba(9,44,64,.92) 55%,rgba(5,24,38,.95));
+      clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);text-shadow:0 0 12px rgba(120,240,255,.65),0 2px 2px #000}
+    .cont small{display:block;font:700 clamp(11px,.82vw,14px)/1.2 CombatKR,sans-serif;letter-spacing:.08em;color:#9fdbe8;text-shadow:0 1px 2px #000}
+    .title-stage[data-save=on] .cont{display:block}
+    .cont:hover,.cont:focus-visible{outline:none;filter:brightness(1.14);transform:translateY(-2px)}
+    .cont:hover .cont-in,.cont:focus-visible .cont-in{background:linear-gradient(100deg,rgba(14,64,92,.97),rgba(28,108,138,.95) 55%,rgba(14,64,92,.97))}
+    .cont:active{transform:translateY(0);filter:brightness(1.25)}
 
     .settings{position:absolute;z-index:4;right:3.2vw;top:4.6vh;display:flex;align-items:center;gap:8px;margin:0;padding:10px 18px 10px 14px;border:1px solid rgba(130,232,255,.4);border-radius:999px;background:rgba(3,14,26,.5);
       color:#d9f0f7;font:700 clamp(14px,1vw,17px)/1 CombatKR,sans-serif;cursor:pointer;text-shadow:0 2px 4px #000;transition:background .16s ease,border-color .16s ease,color .16s ease}
@@ -87,7 +103,7 @@
       .topline{display:none}
       .tagline{transform:translateX(-50%);white-space:nowrap;font-size:clamp(10px,2.9vw,15px);letter-spacing:.3em}
       .title-action{left:50%;bottom:5.5vh;width:100%;align-items:center;transform:translateX(-50%)}
-      .start{min-width:min(84vw,360px)}
+      .start,.cont{min-width:min(84vw,360px)}
       .version{text-align:center;font-size:13px}
       .settings{top:2.2vh;right:3.6vw;padding:8px 14px 8px 11px}
       .run .tagline{animation-name:fadeUpC}
@@ -108,12 +124,27 @@
     <h1 class="logo-slot" id="logoSlot"><span class="sr">AFTER SIGNAL</span><i class="fb fb-logo" aria-hidden="true"></i></h1>
     <div class="topline"><i></i>RELAY PROTOCOL // 01</div>
     <p class="tagline">WHEN THE SILENCE CALLS BACK</p>
-    <div class="title-action"><div class="cta"><button id="start" class="start" type="button"><span class="start-in">새 작전 시작</span></button></div><div class="version"><b>RELAY BUILD // V0.66</b>R-0 LUMEN RELAY LINK READY</div></div>
+    <div class="title-action"><button id="continue" class="cont" type="button"><span class="cont-in"><span>이어하기</span><small id="contInfo"></small></span></button><div class="cta"><button id="start" class="start" type="button"><span class="start-in">새 작전 시작</span></button></div><div class="version"><b>RELAY BUILD // V0.66</b>R-0 LUMEN RELAY LINK READY</div></div>
     <button class="settings" type="button" aria-label="게임 설정" data-af-settings-open>게임 설정</button>
     <div id="boot" class="boot" aria-live="polite"><div><b>OPENING RELAY CHANNEL</b><i></i></div></div>
   </main>
   <script>
-    document.getElementById('start').addEventListener('click',()=>{try{['aftersignal:profile:v3','aftersignal:pending-reward:v3','aftersignal:commander-name:v3'].forEach(key=>localStorage.removeItem(key));for(let index=localStorage.length-1;index>=0;index--){const key=localStorage.key(index);if(key?.startsWith('aftersignal:party-loadout:'))localStorage.removeItem(key)}const profile={version:'3.0',unlockedCharacterIds:['mira'],commander:{name:'',level:1,xp:0},resources:{credits:0,battleData:0,coreSignal:0,weaponModules:0},characters:{mira:{unlocked:true}},weapons:[],inventory:{weaponBoxes:0},clears:{},rewardClaims:{},progress:{currentPrologueStage:'P-01',prologueComplete:false,temporaryBaseUnlocked:false}};localStorage.setItem('aftersignal:profile:v3',JSON.stringify(profile))}catch{}const boot=document.getElementById('boot');boot.classList.add('show');setTimeout(()=>parent.postMessage({type:"aftersignal:navigate",screen:"prologue"},"*"),480)});
+    // Saved game (2026-10-01). 새 작전 시작 used to be the only way in and it wipes the profile, so a finished prologue, the gacha crew and the campaign never outlived a page load.
+    // A save exists once the prologue is done or any prologue stage has been cleared. 이어하기 then opens the lobby (prologue done) or the screen that follows the last claimed
+    // prologue reward (AfterSignalStageFlow row `after`, read from the shell). With a save (read again at press time), the first press on 새 작전 시작 only arms it; the second press wipes as before.
+    (()=>{
+      const stageEl=document.getElementById('stage'),startBtn=document.getElementById('start'),contBtn=document.getElementById('continue'),contInfo=document.getElementById('contInfo'),startText=startBtn.querySelector('.start-in'),boot=document.getElementById('boot');
+      const readSave=()=>{try{const p=JSON.parse(localStorage.getItem('aftersignal:profile:v3')||'null');if(!p||typeof p!=='object')return null;const done=p.progress?.prologueComplete===true||Number(p.clears?.p14)>0,stageId=String(p.progress?.currentPrologueStage||'P-01').toUpperCase();if(!done&&!Object.keys(p.clears||{}).length&&stageId==='P-01')return null;const cleared=p.campaign?.cleared&&typeof p.campaign.cleared==='object'?p.campaign.cleared:{},top=Object.keys(cleared).filter(key=>/^CH\d\d-\d\d$/.test(key)&&Number(cleared[key])>0).sort().pop()||'',last=/^CH(\d\d)-(\d\d)$/.exec(top);return{done,stageId,info:done?(last?'CHAPTER '+last[1]+' · '+Number(last[1])+'-'+last[2]+' 클리어':'프롤로그 완료'):'프롤로그 · '+stageId}}catch{return null}};
+      const save=readSave();
+      const target=!save?null:save.done?'lobby':(()=>{try{return parent.AfterSignalStageFlow?.routeForStage?.(save.stageId)?.after||null}catch{return null}})();
+      if(save&&target){contInfo.textContent=save.info;stageEl.dataset.save='on'}
+      const go=screen=>{boot.classList.add('show');setTimeout(()=>{if(parent!==window)parent.postMessage({type:'aftersignal:navigate',screen,resume:true},'*');else location.href=screen+'.html'},480)};
+      contBtn.addEventListener('click',()=>{if(!target)return;try{window.AfterSignalTitleLive2D?.triggerStart?.()}catch{}go(target)});
+      let armed=false,armTimer=0;
+      startBtn.addEventListener('click',event=>{
+        if(!armed&&readSave()){armed=true;startBtn.classList.add('armed');startText.textContent='저장 삭제 · 한 번 더';clearTimeout(armTimer);armTimer=setTimeout(()=>{armed=false;startBtn.classList.remove('armed');startText.textContent='새 작전 시작'},5000);event.stopImmediatePropagation();return}
+        try{['aftersignal:profile:v3','aftersignal:pending-reward:v3','aftersignal:commander-name:v3'].forEach(key=>localStorage.removeItem(key));for(let index=localStorage.length-1;index>=0;index--){const key=localStorage.key(index);if(key?.startsWith('aftersignal:party-loadout:'))localStorage.removeItem(key)}const profile={version:'3.0',unlockedCharacterIds:['mira'],commander:{name:'',level:1,xp:0},resources:{credits:0,battleData:0,coreSignal:0,weaponModules:0},characters:{mira:{unlocked:true}},weapons:[],inventory:{weaponBoxes:0},clears:{},rewardClaims:{},progress:{currentPrologueStage:'P-01',prologueComplete:false,temporaryBaseUnlocked:false}};localStorage.setItem('aftersignal:profile:v3',JSON.stringify(profile))}catch{}const boot=document.getElementById('boot');boot.classList.add('show');setTimeout(()=>parent.postMessage({type:"aftersignal:navigate",screen:"prologue"},"*"),480)});
+    })();
   </script>
 <script>
 (() => {
@@ -133,7 +164,7 @@
   }).observe(result, { attributes: true, attributeFilter: ["class"] });
 })();
 </script>
-<script src="../shared/title/AFTERSIGNAL_TITLE_LIVE2D_V1.js?build=20261001tl2"></script>
+<script src="../shared/title/AFTERSIGNAL_TITLE_LIVE2D_V1.js?build=20261002deploy1"></script>
 <script>
 /* live-2D title scene (shared/title/AFTERSIGNAL_TITLE_LIVE2D_V1.js). Without WebGL2 the page keeps the static layout below. */
 (() => {
@@ -155,6 +186,6 @@
   }).then(ok => { if (ok) stage.dataset.live = 'on'; else fallback(); }).catch(fallback);
 })();
 </script>
-<script src="../shared/foundation/AFTERSIGNAL_GAME_SETTINGS_V1.js?build=20260929set2"></script>
+<script src="../shared/foundation/AFTERSIGNAL_GAME_SETTINGS_V1.js?build=20261002deploy1"></script>
 </body>
 </html>
