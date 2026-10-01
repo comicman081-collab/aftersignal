@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "source_library": "kArchive 3D Models — dogfooter",
+  "source_url": "https://karchive.vibeline.co.kr/models",
+  "source_license": "C:\\ai_asset\\karchive\\2026-09-19\\models\\LICENSE.txt",
+  "source_license_sha256": "ae8594212c54a648c5134b8a2c43b85209d363e09f49fa349c58559a1fd5121b",
+  "rights_checked": {
+    "commercial_project_use": true,
+    "modification": true,
+    "attribution_required": "자료: kArchive · 출처: 쓰레드 dogfooter",
+    "ai_training": false,
+    "raw_asset_resale": false,
+    "evidence": [
+      "bundled LICENSE.txt",
+      "2026-09-19 local website terms snapshot"
+    ]
+  },
+  "runtime_license_copy_sha256": "ae8594212c54a648c5134b8a2c43b85209d363e09f49fa349c58559a1fd5121b",
+  "assets": [
+    {
+      "source_glb": "C:\\ai_asset\\karchive\\2026-09-19\\models\\angular\\angular-apocalypse-sandbag-barricade.glb",
+      "source_sha256": "befba09955b3a70ea950330765751607c352069b4f540b07649c0e5c5cd9d270",
+      "runtime_sprite": "sandbag-barricade.webp",
+      "runtime_sha256": "074d9151087fd029c83389683130ca79f47d1fac91f868978051d30cab0ab967",
+      "processing": "Blender 5.2.1 Cycles RGBA; procedural dirt/noise, roughness and cool lighting"
+    },
+    {
+      "source_glb": "C:\\ai_asset\\karchive\\2026-09-19\\models\\angular\\angular-apocalypse-sandbag-barricade-destroyed.glb",
+      "source_sha256": "2d5f8ee1ebc299dd0fba12a451ecf943161504a74874b2baeb1edff7d3aacdaf",
+      "runtime_sprite": "sandbag-barricade-destroyed.webp",
+      "runtime_sha256": "1601ec85765367ab6a439904bbbd9f2d9b20480b30756dc5f5f639faf09895b2",
+      "processing": "Blender 5.2.1 Cycles RGBA; procedural dirt/noise, roughness and cool lighting"
+    },
+    {
+      "source_glb": "C:\\ai_asset\\karchive\\2026-09-19\\models\\angular\\angular-apocalypse-concrete-roadblock.glb",
+      "source_sha256": "1a47767dfeb9ea71325c1bd30ebd6acba20ee12172c3ea39e50a4d9b6613229e",
+      "runtime_sprite": "concrete-roadblock.webp",
+      "runtime_sha256": "7b5a14e4d84b33453b66373d8f26111627918d8e8ce3d1e3ca122844c4e7892f",
+      "processing": "Blender 5.2.1 Cycles RGBA; procedural dirt/noise, roughness and cool lighting"
+    },
+    {
+      "source_glb": "C:\\ai_asset\\karchive\\2026-09-19\\models\\angular\\angular-apocalypse-concrete-roadblock-destroyed.glb",
+      "source_sha256": "a8f42b15dd469992d164976f1feb4c67bfaae24d7dcbeeb767a5468d49d42745",
+      "runtime_sprite": "concrete-roadblock-destroyed.webp",
+      "runtime_sha256": "8dfdf947a15316c34a9c23445ac8628f9e89cd63730687aca9f59e774d238095",
+      "processing": "Blender 5.2.1 Cycles RGBA; procedural dirt/noise, roughness and cool lighting"
+    },
+    {
+      "source_glb": "C:\\ai_asset\\karchive\\2026-09-19\\models\\angular\\angular-apocalypse-tire-barricade.glb",
+      "source_sha256": "c6e8a0451a9c46d8bd7776e9da38b6e69751a4291789e884270515dffa639198",
+      "runtime_sprite": "tire-barricade.webp",
+      "runtime_sha256": "87656d5aeab83c3d94cad4e9d0699beb57fbee64131f5b8eea9012783394c415",
+      "processing": "Blender 5.2.1 Cycles RGBA; procedural dirt/noise, roughness and cool lighting"
+    },
+    {
+      "source_glb": "C:\\ai_asset\\karchive\\2026-09-19\\models\\angular\\angular-apocalypse-tire-barricade-destroyed.glb",
+      "source_sha256": "631969c01d2e1bda70c1108f67225d7442cde08fa8de69a25e5e80eed4256644",
+      "runtime_sprite": "tire-barricade-destroyed.webp",
+      "runtime_sha256": "224f30e84cd1c1979327c5aaffdd2e23d8328df4e005556f408fac013abc7868",
+      "processing": "Blender 5.2.1 Cycles RGBA; procedural dirt/noise, roughness and cool lighting"
+    },
+    {
+      "source_glb": "C:\\ai_asset\\karchive\\2026-09-19\\models\\angular\\angular-apocalypse-supply-crates.glb",
+      "source_sha256": "c1c8439c8bcdc579c48d6d32e1699b84be14d290c81e52d2867cced74e8163c7",
+      "runtime_sprite": "supply-crates.webp",
+      "runtime_sha256": "fa6f52b39dfcc95914ec08981546eda32da1abb23cb4ab6cf5b5571969cad7b6",
+      "processing": "Blender 5.2.1 Cycles RGBA; procedural dirt/noise, roughness and cool lighting"
+    },
+    {
+      "source_glb": "C:\\ai_asset\\karchive\\2026-09-19\\models\\angular\\angular-apocalypse-supply-crates-destroyed.glb",
+      "source_sha256": "35b0a007c2c3162b8a705c45fa97d730774d6dc7c999179da1afdda019b6bf69",
+      "runtime_sprite": "supply-crates-destroyed.webp",
+      "runtime_sha256": "a73d8d379eb28ada1ae11220ee6d7d6e4e3ca9566247534565af38bc20393cc5",
+      "processing": "Blender 5.2.1 Cycles RGBA; procedural dirt/noise, roughness and cool lighting"
+    }
+  ]
+}

@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#02070b">
+  <title>AFTER SIGNAL — P-02 관 속의 목소리 V0.29</title>
+  <style>
+    
+    @font-face{font-family:CombatKR;src:url("../assets/fa6767788359138e7825.woff2") format("woff2");font-weight:700 900;font-display:swap}@font-face{font-family:RelayDisplay;src:url("../assets/5b7e4a6f97163c263672.woff2") format("woff2");font-weight:700;font-display:swap}@font-face{font-family:SignalMark;src:url("../assets/d887437e7949fd394c3a.bin") format("truetype");font-weight:400 900;font-display:swap}
+    :root{--cyan:#78e7ef;--ink:#eef7f8;--muted:#a9c0c8;--gold:#f5ce8d}
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02070b;color:var(--ink)}
+    button{font:inherit}
+    .story{position:relative;width:100%;height:100%;isolation:isolate;overflow:hidden;background:#06101a;font-family:CombatKR,"Noto Sans KR",sans-serif}
+    .backdrop{position:absolute;inset:-3%;background-image:linear-gradient(180deg,rgba(1,8,15,.08),rgba(1,7,12,.44)),url("../assets/48e25bc05c415adf744b.webp");background-size:cover;background-position:center;filter:saturate(.78) contrast(1.08);transform:scale(1.04);transition:transform 1.2s ease,filter .7s ease}
+    .backdrop:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 52% 55%,rgba(87,218,239,.08),transparent 38%),linear-gradient(90deg,rgba(0,0,0,.28),transparent 30%,transparent 70%,rgba(0,0,0,.3))}
+    .rain{position:absolute;inset:-20%;opacity:.32;background:repeating-linear-gradient(106deg,transparent 0 20px,rgba(170,227,255,.23) 21px,transparent 22px 43px);animation:rain 1.35s linear infinite;mix-blend-mode:screen}
+    .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(116,230,241,.035) 0 1px,transparent 1px 5px);pointer-events:none;z-index:8}
+    .vignette{position:absolute;inset:0;box-shadow:inset 0 0 140px rgba(0,0,0,.78);pointer-events:none;z-index:7}
+    .operator{position:absolute;z-index:3;right:5.5%;bottom:-13%;height:104%;max-width:58%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 18px 32px rgba(0,0,0,.72));opacity:0;transform:translateX(35px);transition:opacity .38s ease,transform .55s cubic-bezier(.2,.78,.2,1),filter .45s ease}
+    .story[data-mode^="mira"] .operator{opacity:1;transform:translateX(0)}
+    .story[data-mode="mira-close"] .operator{height:100%;right:3%;bottom:-8%}
+    .story[data-mode="mira-dim"] .operator{opacity:.72;filter:brightness(.64) saturate(.5) drop-shadow(0 18px 32px rgba(0,0,0,.72))}
+    .story[data-mode="wide"] .backdrop,.story[data-mode="chapter"] .backdrop{transform:scale(1.11)}
+    .archive-core{position:absolute;z-index:2;left:50%;top:48%;width:140px;height:250px;opacity:0;transform:translate(-50%,-50%) scale(.8);transition:.5s ease;border:1px solid rgba(133,238,255,.2);background:linear-gradient(90deg,transparent,rgba(104,234,255,.1),transparent);box-shadow:0 0 44px rgba(94,221,255,.1)}
+    .archive-core:before{content:"";position:absolute;left:50%;top:50%;width:3px;height:100%;transform:translate(-50%,-50%);background:#b4f7ff;box-shadow:0 0 18px #75e9ff,0 0 65px #75e9ff}
+    .story[data-mode*="archive"] .archive-core{opacity:.78;transform:translate(-50%,-50%) scale(1)}
+    .story[data-mode="chapter"] .archive-core{opacity:1;width:220px;height:390px;filter:blur(.3px)}
+    .hud{position:absolute;z-index:12;left:3.5%;right:3.5%;top:3%;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none}
+    .chapter-id{padding-left:12px;border-left:3px solid var(--cyan);font:700 13px/1.35 RelayDisplay,monospace;letter-spacing:.16em;color:#d7fbff;text-shadow:0 2px 5px #000}
+    .controls{display:flex;gap:14px;align-items:center;color:#f7ffff;font:700 14px/1 RelayDisplay,monospace;letter-spacing:.05em}
+    .controls button{pointer-events:auto;border:0;background:none;color:inherit;padding:4px;cursor:pointer;text-shadow:0 2px 4px #000}
+    .progress{position:absolute;z-index:12;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,#66e8ef,#d99cff);box-shadow:0 0 12px #75ebff;transition:width .25s ease}
+    .dialogue{position:absolute;z-index:10;left:7.5%;right:7.5%;bottom:5.5%;min-height:160px;padding:20px 26px 22px;border-left:4px solid rgba(221,251,255,.9);background:linear-gradient(90deg,rgba(1,7,13,.9),rgba(2,11,18,.72) 62%,rgba(2,10,16,.22));box-shadow:0 20px 60px rgba(0,0,0,.34);backdrop-filter:blur(3px);cursor:pointer;transition:opacity .16s ease,transform .16s ease}
+    .story[data-mode^="mira"] .dialogue{right:34%}
+    .dialogue.changing{opacity:.15;transform:translateY(5px)}
+    .speaker{display:flex;align-items:baseline;gap:14px}
+    .speaker strong{font-size:20px;line-height:1;color:#fff}
+    .speaker small{color:var(--gold);font:700 12px/1 RelayDisplay,monospace;letter-spacing:.13em}
+    .line{margin:14px 0 0;max-width:1050px;color:#eef6f7;font-size:22px;font-weight:600;line-height:1.68;letter-spacing:-.018em;text-shadow:0 2px 5px #000}
+    .advance{position:absolute;right:20px;bottom:10px;color:#e9fdff;font:800 19px/1 RelayDisplay,monospace;animation:pulse .85s ease-in-out infinite alternate}
+    .story[data-mode="system"] .dialogue,.story[data-mode="report"] .dialogue,.story[data-mode*="archive"] .dialogue{border-left-color:#7eeeff;background:linear-gradient(90deg,rgba(2,20,29,.94),rgba(4,21,34,.72),rgba(2,10,16,.3))}
+    .story[data-mode="chapter"] .dialogue{left:50%;right:auto;top:50%;bottom:auto;width:min(760px,84vw);min-height:0;transform:translate(-50%,-50%);border:0;border-top:1px solid rgba(120,234,242,.72);border-bottom:1px solid rgba(202,155,255,.58);background:rgba(2,10,18,.82);text-align:center;padding:28px 34px 32px}
+    .story[data-mode="chapter"] .speaker{justify-content:center}
+    .story[data-mode="chapter"] .speaker strong{display:none}
+    .story[data-mode="chapter"] .line{font-size:19px}
+    .chapter-title{display:none;margin:4px 0 10px;color:#f6ffff;font-size:46px;line-height:1.12;letter-spacing:.04em}
+    .story[data-mode="chapter"] .chapter-title{display:block}
+    .end-action{display:none;margin:21px auto 0;padding:12px 27px;border:1px solid var(--cyan);background:rgba(2,20,27,.86);color:#eaffff;font:800 15px/1 CombatKR,SignalKR,"Noto Sans KR",system-ui,sans-serif;letter-spacing:.04em;cursor:pointer}
+    .story[data-mode="chapter"] .end-action{display:block}
+    .story[data-mode="chapter"] .advance{display:none}
+    @keyframes rain{to{transform:translate(52px,150px)}}
+    @keyframes pulse{to{transform:translateY(4px);opacity:.55}}
+    @media(max-width:760px){
+      .hud{left:4%;right:4%}.controls{gap:6px;font-size:11px}.controls button:first-child{display:none}
+      .dialogue{left:4%;right:4%;bottom:3.2%;min-height:142px;padding:16px 18px 18px}
+      .story[data-mode^="mira"] .dialogue{right:25%}
+      .operator{right:-3%;height:87%;bottom:-9%;opacity:.72}
+      .speaker strong{font-size:17px}.speaker small{font-size:10px}
+      .line{font-size:17px;line-height:1.58}
+      .chapter-title{font-size:34px}
+    }
+  
+    .backdrop{background-image:linear-gradient(180deg,rgba(1,8,15,.10),rgba(1,7,12,.52)),url("../assets/ab239d68a55cd76d1ad8.webp");filter:saturate(.72) contrast(1.12) brightness(.82)}
+    .rain{opacity:.12;animation-duration:2.2s}
+    .archive-core{top:44%;width:190px;height:300px}
+    .story[data-mode*="archive"] .archive-core,.story[data-mode="alert"] .archive-core{opacity:.82;transform:translate(-50%,-50%) scale(1)}
+    .story[data-mode="alert"] .archive-core{border-color:rgba(255,105,90,.48);box-shadow:0 0 58px rgba(255,74,62,.18)}
+    .story[data-mode="alert"] .archive-core:before{background:#ff8a7b;box-shadow:0 0 20px #ff5847,0 0 70px #ff5847}
+    .story[data-mode^="chapter"] .dialogue{left:50%;right:auto;top:50%;bottom:auto;width:min(820px,86vw);min-height:0;transform:translate(-50%,-50%);border:0;border-top:1px solid rgba(120,234,242,.72);border-bottom:1px solid rgba(202,155,255,.58);background:rgba(2,10,18,.84);text-align:center;padding:28px 34px 32px}
+    .story[data-mode^="chapter"] .speaker{justify-content:center}.story[data-mode^="chapter"] .speaker strong{display:none}.story[data-mode^="chapter"] .chapter-title{display:block}.story[data-mode^="chapter"] .line{margin-left:auto;margin-right:auto;font-size:19px}.story[data-mode="chapter-end"] .end-action{display:block}.story[data-mode^="chapter"] .advance{display:none}
+    .story[data-mode="mira-ready"] .operator{opacity:1;transform:translateX(0);filter:brightness(1.08) drop-shadow(0 0 30px rgba(107,237,255,.38))}
+    @media(max-width:760px){.story[data-mode^="chapter"] .line{font-size:17px}.story[data-mode^="chapter"] .dialogue{padding:24px 20px 26px}}
+  </style>
+<style data-af-story-controls="8aeedc011a23ade1fe983ac06dd40c5692539d7cfc4edc04d684185a5f228f90">/* AFTER SIGNAL story controls contract V1.1 — P-00 active: HIDE [H] AUTO [A] LOG [L] SKIP [S] */
+.af-story-controls{
+  position:absolute!important;z-index:40!important;top:max(16px,env(safe-area-inset-top))!important;
+  right:max(22px,env(safe-area-inset-right))!important;left:auto!important;bottom:auto!important;
+  display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:15px!important;
+  width:auto!important;padding:5px 8px!important;border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;
+}
+.af-story-controls .af-story-control{
+  appearance:none!important;display:inline-flex!important;align-items:center!important;gap:7px!important;
+  min-width:0!important;min-height:0!important;margin:0!important;padding:3px 0!important;border:0!important;
+  border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#f5f7fb!important;
+  font:900 15px/1.05 RelayDisplay,CombatKR,"Noto Sans KR",system-ui,sans-serif!important;
+  letter-spacing:-.025em!important;text-shadow:0 2px 5px #000,0 0 10px rgba(0,0,0,.78)!important;cursor:pointer!important;
+}
+.af-story-controls .af-story-control kbd{
+  display:inline-grid!important;place-items:center!important;min-width:23px!important;height:22px!important;
+  padding:0 5px!important;border:1px solid rgba(235,241,249,.72)!important;border-radius:6px!important;
+  background:rgba(4,9,16,.54)!important;color:#f5f7fb!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  font:800 11px/1 RelayDisplay,ui-monospace,monospace!important;text-shadow:none!important;
+}
+.af-story-controls .af-story-control.active{color:#83f5f8!important}
+.af-story-controls .af-story-control:hover,.af-story-controls .af-story-control:focus-visible{color:#ffd38a!important;outline:none!important}
+.af-story-controls .af-story-control:focus-visible kbd{border-color:#ffd38a!important;box-shadow:0 0 0 2px rgba(255,211,138,.2)!important}
+.af-story-controls [data-af-story-action="sound"]{display:none!important}
+/* The actual log panel is never normalized as a button. Keep it above the
+   P-00 opening veil so LOG remains usable on the entry scene. */
+.log.show,[role="dialog"].log.show{z-index:45!important}
+@media(max-width:700px){
+  .af-story-controls{top:max(10px,env(safe-area-inset-top))!important;right:max(9px,env(safe-area-inset-right))!important;transform:none!important;gap:9px!important;padding:3px!important}
+  .af-story-controls .af-story-control{gap:4px!important;font-size:12px!important}
+  .af-story-controls .af-story-control kbd{min-width:19px!important;height:18px!important;padding:0 3px!important;border-radius:5px!important;font-size:9px!important}
+}
+@media(max-width:390px){.af-story-controls{gap:7px!important}.af-story-controls .af-story-control{font-size:11px!important}}
+</style><script src="../shared/foundation/AFTERSIGNAL_STAGE_FLOW_V1.js?build=20260816m5portrait4"></script></head>
+<body>
+  <main id="story" class="story" data-mode="chapter-open" aria-label="AFTERSIGNAL P-02 관 속의 목소리">
+    <div class="backdrop"></div><div class="rain"></div><div class="archive-core"></div>
+    <img class="operator" src="../assets/final_2p5d_v066/characters/mira/standing_2026_09_23/MIRA_VOSS_STANDING_FRESH_A001.png" alt="미라 보스">
+    <div class="scan"></div><div class="vignette"></div><div id="progress" class="progress"></div>
+    <header class="hud"><div class="chapter-id">PROLOGUE // P-02<br>VOICE IN THE COFFIN</div><div class="controls"><button id="hideButton" type="button">HIDE</button><button id="autoButton" type="button">AUTO</button><button id="logButton" type="button">LOG</button><button id="skipButton" type="button">SKIP</button></div></header>
+    <section id="dialogue" class="dialogue" role="button" tabindex="0" aria-label="다음 대사">
+      <div class="speaker"><strong id="speaker"></strong><small id="label"></small></div>
+      <h1 id="chapterTitle" class="chapter-title"></h1><p id="line" class="line"></p>
+      <button id="endAction" class="end-action" type="button">P-02 전투 개시</button><span class="advance">⌄</span>
+    </section>
+  </main>
+  <script>
+    const scenes = [{"speaker":"서술","label":"PROLOGUE // P-02","title":"관 속의 목소리","text":"비상 전력이 되살아난 뒤, 침수 통로의 수면 아래로 오래된 유도등이 한 칸씩 켜진다.","mode":"chapter-open"},{"speaker":"서술","label":"R-0 LUMEN // LOWER ROUTE","text":"캡슐 유리에 남은 손자국과 새로 맺힌 성에가 겹쳐 있다. 43년 전 근무 교대 방송 사이로 현재의 구조 신호가 끊겨 들어온다.","mode":"wide"},{"speaker":"미라 보스","label":"FIELD LINK // MIRA","text":"제어실 아래 인격 보관실까지 280미터. 오른쪽 통로는 침수됐고, 왼쪽 통로에는 신호 기생체 반응이 있습니다.","mode":"mira"},{"speaker":"사령관","label":"RELAY // UNKNOWN ID","text":"호칭은 계속 보류해. 나는 아직 내 이름도, 과거도 기억하지 못해. 이동 경로와 철수 조건만 승인하겠다.","mode":"first"},{"speaker":"미라 보스","label":"FIELD LINK // MIRA","text":"동의합니다. 사격과 현장 판단은 제가 맡고, 감지 정보는 가공하지 않은 원본과 함께 먼저 공유하겠습니다.","mode":"mira-close"},{"speaker":"기지 시스템","label":"IDENTITY HANDSHAKE","text":"생체 키 재확인. 구 릴레이 지휘 권한 복구를 다시 요청합니다. 현재 인격과 과거 기록의 연속성은 검증할 수 없습니다.","mode":"system"},{"speaker":"사령관","label":"RELAY // UNKNOWN ID","text":"몇 번을 확인해도 일치하는 건 몸뿐이야. 시스템이 권한을 돌려줘도, 내가 그 사람이라는 증거가 되진 않아.","mode":"first"},{"speaker":"미라 보스","label":"FIELD LINK // MIRA","text":"맞습니다. 그래서 제가 알고 있는 과거를 먼저 정답처럼 강요하지 않겠습니다. 보관실의 원본부터 확인하죠.","mode":"mira"},{"speaker":"서술","label":"ARCHIVE APPROACH","text":"무너진 플랫폼 너머에서 관처럼 긴 보관 캡슐들이 모습을 드러낸다. 하나의 캡슐만 희미한 청록빛을 유지하고 있다.","mode":"archive"},{"speaker":"아카이브 음성","label":"DEGRADED RECORD // MIRA VOSS","text":"……호출명 확인. 구 릴레이 지휘관, 응답해 주십시오.","mode":"archive-voice"},{"speaker":"사령관","label":"RELAY // UNKNOWN ID","text":"아까 들린 그 목소리야. 호칭을 읽은 게 아니라, 나를 먼저 알고 있던 목소리였어.","mode":"first"},{"speaker":"미라 보스","label":"FIELD LINK // MIRA","text":"아까는 프레임 정착 오류라고 했지만, 오류라고 단정할 근거는 없습니다. 제가 숨긴 부분이 있다는 의심은 타당합니다.","mode":"mira-dim"},{"speaker":"사령관","label":"RELAY // UNKNOWN ID","text":"그럼 지금 전부 설명할 수 있어?","mode":"first"},{"speaker":"미라 보스","label":"FIELD LINK // MIRA","text":"아니요. 제 현재 프레임에는 그 기억이 온전히 없습니다. 보관실을 지켜 원본을 복구해야 확인할 수 있습니다.","mode":"mira-close"},{"speaker":"사령관","label":"RELAY // UNKNOWN ID","text":"좋아. 모르는 건 모른다고 기록해. 대신 알고 있는 위험과 철수선은 지금 공개해.","mode":"first"},{"speaker":"미라 보스","label":"FIELD LINK // MIRA","text":"전진선, 구조선, 철수선을 분리했습니다. 어느 한쪽이 끊겨도 다른 두 채널은 유지됩니다. 제 프레임 정착률은 71퍼센트입니다.","mode":"mira"},{"speaker":"기지 시스템","label":"HOSTILE SIGNAL","text":"신호 기생체 및 기억 포식 드론 접근. 인격 보관실 외벽 손상까지 96초. 미라 보스 프레임 정착 절차가 중단되었습니다.","mode":"alert"},{"speaker":"사령관","label":"RELAY // LIMITED COMMAND","text":"목표를 다시 확인한다. 보관실 방어와 미라의 정착 완료가 우선이다. 적 처치는 그다음이야.","mode":"first"},{"speaker":"미라 보스","label":"FIELD LINK // MIRA","text":"확인. 왼팔 감각이 늦지만 교정 핑은 사용할 수 있습니다. 사격 판단은 제가, 철수 판단은 당신이 맡습니다.","mode":"mira-ready"},{"speaker":"사령관","label":"RELAY // LIMITED COMMAND","text":"과거의 내가 아니라 지금의 나에게 보고해. 그리고 무리하면 즉시 물러나. 설명할 기회를 잃게 두지 않겠어.","mode":"first"},{"speaker":"서술","label":"OPERATION LINK READY","title":"P-02 전투 준비","text":"인격 보관실을 방어하며 미라의 프레임 정착을 완료하십시오. 신호 기생체와 기억 포식 드론이 접근 중입니다.","mode":"chapter-end"}];
+    const story=document.getElementById("story"),dialogue=document.getElementById("dialogue"),speaker=document.getElementById("speaker"),label=document.getElementById("label"),line=document.getElementById("line"),chapterTitle=document.getElementById("chapterTitle"),progress=document.getElementById("progress");
+    let index=0,auto=false,timer=0,hidden=false;
+    function render(nextIndex,instant=false){index=Math.max(0,Math.min(scenes.length-1,nextIndex));const scene=scenes[index];if(!instant)dialogue.classList.add("changing");clearTimeout(timer);setTimeout(()=>{story.dataset.mode=scene.mode;speaker.textContent=scene.speaker;dialogue.toggleAttribute("data-af-narration",scene.speaker==="서술"&&!/^chapter/.test(scene.mode));label.textContent=scene.label;line.textContent=scene.text;chapterTitle.textContent=scene.title||"";progress.style.width=((index+1)/scenes.length*100)+"%";dialogue.classList.remove("changing");scheduleAuto()},instant?0:120)}
+    function next(){if(index<scenes.length-1)render(index+1)}
+    function scheduleAuto(){clearTimeout(timer);if(!auto||index>=scenes.length-1)return;timer=setTimeout(next,Math.max(Math.min(9000,2300+scenes[index].text.length*66),window.AfterSignalStoryVoice?.holdMs()||0))}
+    dialogue.addEventListener("click",event=>{if(!event.target.closest("button"))next()});dialogue.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();next()}});
+    document.addEventListener("keydown",event=>{if(event.key===" "||event.key==="Enter"||event.key==="ArrowRight"){event.preventDefault();next()}if(event.key.toLowerCase()==="a")document.getElementById("autoButton").click()});
+    document.getElementById("autoButton").addEventListener("click",function(){auto=!auto;this.textContent=auto?"● AUTO":"AUTO";scheduleAuto()});
+    document.getElementById("hideButton").addEventListener("click",function(){hidden=!hidden;dialogue.style.visibility=hidden?"hidden":"visible";this.textContent=hidden?"◩ SHOW":"HIDE"});
+    document.getElementById("logButton").addEventListener("click",()=>window.alert(scenes.slice(0,index+1).map(item=>(item.speaker==="서술"?"":item.speaker+" | ")+item.text).join("\n\n")));
+    document.getElementById("skipButton").addEventListener("click",()=>render(scenes.length-1));
+    document.getElementById("endAction").addEventListener("click",function(){if(window.parent!==window){window.parent.postMessage({type:"aftersignal:navigate",screen:"p02combat"},"*")}else{window.location.href="AFTERSIGNAL_P02_COMBAT_V0_29_STANDALONE.html"}});
+    render(0,true);
+  </script>
+<script>
+(() => {
+  if (window.parent === window) return;
+  let sent = false;
+  const unlock = () => {
+    if (sent) return;
+    sent = true;
+    window.parent.postMessage({ type: "aftersignal:audio-unlock" }, "*");
+  };
+  window.addEventListener("pointerdown", unlock, { passive: true });
+  window.addEventListener("keydown", unlock);
+  const result = document.getElementById("resultOverlay");
+  if (result) new MutationObserver(() => {
+    const won = !result.classList.contains("hidden") && (document.getElementById("resultText")?.textContent || "").includes("3/3 회수 완료");
+    if (won) window.parent.postMessage({ type: "aftersignal:bgm", cue: "p04_resolution" }, "*");
+  }).observe(result, { attributes: true, attributeFilter: ["class"] });
+})();
+</script>
+<script data-af-story-controls="8aeedc011a23ade1fe983ac06dd40c5692539d7cfc4edc04d684185a5f228f90">(()=>{
+  "use strict";
+  const specs={
+    hide:{ids:["hide","hideButton"],label:"HIDE",key:"H",code:"KeyH"},
+    auto:{ids:["auto","autoButton"],label:"AUTO",key:"A",code:"KeyA"},
+    // Some early story pages use #log for the panel and #logButton for the
+    // actual control. The control must always win the ID lookup.
+    log:{ids:["logButton","log"],label:"LOG",key:"L",code:"KeyL"},
+    skip:{ids:["skip","skipButton"],label:"SKIP",key:"S",code:"KeyS"},
+    sound:{ids:["sound","soundButton","bgmButton"],label:"BGM",key:"M",code:"KeyM"}
+  };
+  const find=spec=>{
+    const candidates=spec.ids.map(id=>document.getElementById(id)).filter(Boolean);
+    return candidates.find(node=>node.tagName==="BUTTON")||candidates[0];
+  };
+  const render=(button,action,spec)=>{
+    if(!button)return;
+    button.dataset.afStoryAction=action;
+    button.classList.add("af-story-control");
+    button.innerHTML=`<span>${spec.label}</span><kbd aria-hidden="true">${spec.key}</kbd>`;
+    button.setAttribute("aria-keyshortcuts",spec.key);
+  };
+  const normalize=()=>{
+    const controls=Object.entries(specs).map(([action,spec])=>[action,spec,find(spec)]).filter(([,spec,node])=>node&&spec.label!=="BGM");
+    const nav=controls[0]?.[2]?.closest("nav,.story-head,.controls,.top-actions,.story-controls")||controls[0]?.[2]?.parentElement;
+    if(!nav)return false;
+    nav.classList.add("af-story-controls");
+    controls.forEach(([action,spec,node])=>{if(node.parentElement!==nav)nav.append(node);render(node,action,spec)});
+    const sound=find(specs.sound);if(sound){sound.dataset.afStoryAction="sound";sound.classList.add("af-story-control")}
+    return true;
+  };
+  normalize();
+  document.addEventListener("keydown",event=>{
+    if(event.repeat||event.altKey||event.ctrlKey||event.metaKey)return;
+    const target=event.target;if(target?.matches?.("input,textarea,select,[contenteditable=true]"))return;
+    const entry=Object.entries(specs).find(([,spec])=>spec.code===event.code);if(!entry)return;
+    const button=find(entry[1]);if(!button||button.disabled)return;
+    // P-00 already owns a window-level shortcut listener. Stop this event at
+    // document so one physical key press cannot toggle the action twice.
+    event.preventDefault();event.stopPropagation();button.click();
+  });
+  window.AfterSignalStoryControls=Object.freeze({version:"1.1",normalize,specs});
+})();
+</script><script data-af-stage-flow-story="1.0">(()=>{const screen="p02",flow=window.AfterSignalStageFlow;if(!flow)return;const legacyNext=typeof window.next==="function"?window.next:null;if(legacyNext)window.next=function(){try{if(typeof index!=="undefined"&&typeof SCENES!=="undefined"&&index>=SCENES.length-1)return flow.continueFrom(screen)}catch{}return legacyNext.apply(this,arguments)};for(const id of ["endAction","enterBattle"]){const node=document.getElementById(id);node?.addEventListener("click",event=>{event.preventDefault();event.stopImmediatePropagation();flow.continueFrom(screen)},{capture:true})}})();</script><script src="../shared/story-ui/AFTERSIGNAL_STORY_VOICE_V1.js?build=20260929vl1" data-af-story-voice="p02"></script></body>
+</html>

@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#05080d">
+  <title>AFTERSIGNAL — P-01 Prologue V0.27 STANDALONE</title>
+  <style>
+    @font-face{font-family:CombatKR;src:url("../assets/fa6767788359138e7825.woff2") format("woff2");font-weight:700 900;font-display:swap}
+    @font-face{font-family:RelayDisplay;src:url("../assets/5b7e4a6f97163c263672.woff2") format("woff2");font-weight:700;font-display:swap}
+    @font-face{font-family:SignalMark;src:url("../assets/d887437e7949fd394c3a.bin") format("truetype");font-weight:400 900;font-display:swap}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#020407;color:#f5f8fa;font-family:CombatKR,"Noto Sans KR",sans-serif}.scene{position:relative;width:100%;height:100%;min-height:440px;overflow:hidden;isolation:isolate;background:#080d14}.scene:before{content:"";position:absolute;inset:-3%;z-index:-4;background:url("../assets/48e25bc05c415adf744b.webp") center/cover no-repeat;filter:saturate(.72) contrast(1.08) brightness(.72);transform:scale(1.03);transition:filter .7s}.scene:after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 66% 37%,rgba(105,224,249,.10),transparent 30%),linear-gradient(90deg,rgba(0,3,7,.74),transparent 58%),linear-gradient(0deg,rgba(0,2,6,.98) 2%,rgba(0,2,6,.86) 25%,rgba(0,2,6,.22) 62%,rgba(0,2,6,.46));pointer-events:none}.scene[data-speaker="mira"]:before{filter:saturate(.86) contrast(1.08) brightness(.78)}.scene[data-encounter="true"]:before{filter:saturate(.56) contrast(1.15) brightness(.54)}.scan{position:absolute;z-index:1;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(184,230,244,.038) 0 1px,transparent 1px 5px);mix-blend-mode:screen}.story-head{position:absolute;z-index:5;right:3.3%;top:3.4%;display:flex;align-items:center;gap:14px}.story-head button{border:0;background:transparent;color:#f2f4f5;padding:4px 0;font:900 16px/1 CombatKR,sans-serif;letter-spacing:-.02em;cursor:pointer;text-shadow:0 2px 4px #000}.story-head button small{display:inline-grid;place-items:center;min-width:24px;height:20px;margin-left:5px;border:1px solid rgba(255,255,255,.65);border-radius:6px;color:#d9dde0;font:700 11px/1 RelayDisplay,sans-serif;vertical-align:2px}.story-head button.active{color:#7cefff}.story-head button:hover,.story-head button:focus-visible{color:#ffc775;outline:none}.chapter{position:absolute;z-index:4;left:4.7%;top:6%;color:#dbf4fa;text-shadow:0 2px 7px #000}.chapter small{display:block;font:700 13px/1 RelayDisplay,sans-serif;letter-spacing:.2em}.chapter b{display:block;margin-top:6px;font:900 clamp(18px,1.9vw,29px)/1 CombatKR,sans-serif;letter-spacing:-.05em}.chapter i{display:block;width:80px;height:3px;margin-top:11px;background:#7eeaf5;box-shadow:0 0 16px #54cddc}.operator{position:absolute;z-index:2;right:12%;bottom:-16%;width:min(39vw,510px);height:auto;filter:drop-shadow(0 0 29px rgba(125,234,255,.34));opacity:0;transform:translateX(48px) scale(.97);transition:opacity .48s ease,transform .58s cubic-bezier(.16,.84,.22,1)}.scene[data-speaker="mira"] .operator{opacity:1;transform:none}.relay-glyph{position:absolute;z-index:1;right:17%;top:16%;width:min(38vw,510px);aspect-ratio:1;border:1px solid rgba(128,236,255,.16);border-radius:50%;opacity:0;transition:.5s}.relay-glyph:before,.relay-glyph:after{content:"";position:absolute;border:1px solid rgba(166,240,255,.15);border-radius:50%}.relay-glyph:before{inset:12%}.relay-glyph:after{inset:30%;border-style:dashed}.scene[data-speaker="mira"] .relay-glyph{opacity:1;animation:glyph 5s ease-in-out infinite}.enemy-entry{position:absolute;z-index:3;inset:0;opacity:0;pointer-events:none;transition:opacity .35s}.scene[data-encounter="true"] .enemy-entry{opacity:1}.enemy-entry:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 53% 38%,rgba(255,75,67,.16),transparent 31%);animation:alertPulse .72s ease-in-out infinite alternate}.enemy-entry img{position:absolute;filter:drop-shadow(0 0 18px rgba(255,76,61,.55));animation:enemyEntry .48s cubic-bezier(.17,.8,.2,1) both}.enemy-entry .null{left:48%;bottom:24%;width:min(18vw,248px)}.enemy-entry .drone{right:16%;top:23%;width:min(17vw,220px);animation-delay:.08s}.dialogue{position:absolute;z-index:6;left:0;right:0;bottom:0;min-height:34%;padding:0 12.5% 5.2% 11.7%;display:flex;align-items:flex-end;background:linear-gradient(0deg,rgba(0,1,3,.99),rgba(0,1,3,.83) 54%,rgba(0,1,3,0));cursor:pointer}.copy{width:min(900px,77vw);min-height:130px;text-shadow:0 2px 5px #000}.speaker{display:flex;align-items:center;gap:9px;color:#fff;font:900 clamp(21px,2.15vw,34px)/1 CombatKR,sans-serif;letter-spacing:-.06em}.speaker:before{content:"";width:5px;height:clamp(22px,2.2vw,34px);background:#eaf6f8;box-shadow:0 0 10px rgba(152,240,255,.8)}.speaker[data-role="command"]{color:#ffd49a}.speaker[data-role="command"]:before{background:#ffc46e;box-shadow:0 0 10px rgba(255,170,81,.7)}.speaker[data-role="narration"]{color:#b9d2d7;font-size:clamp(17px,1.65vw,25px)}.speaker[data-role="narration"]:before{background:#7fe6ef;height:20px}.line{margin:16px 0 0;color:#f7f9fa;font:900 clamp(22px,2.18vw,34px)/1.55 CombatKR,"Noto Sans KR",sans-serif;letter-spacing:-.055em;word-break:keep-all;opacity:0;transform:translateY(8px);animation:copyIn .35s ease .08s both}.continue{position:absolute;right:5.2%;bottom:6.5%;color:#ecf8fa;font:700 29px/1 RelayDisplay,sans-serif;animation:continue 1.25s ease-in-out infinite;text-shadow:0 1px 5px #000}.status{position:absolute;z-index:7;right:5.2%;bottom:2%;color:#c7d2d6;font:700 11px/1 RelayDisplay,sans-serif;letter-spacing:.15em;text-shadow:0 1px 4px #000}.opening{position:absolute;z-index:20;inset:0;display:grid;place-items:center;background:rgba(0,2,5,.64);backdrop-filter:blur(2px);transition:.35s}.opening.hide{opacity:0;visibility:hidden}.opening-card{width:min(560px,84vw);padding:27px 30px 28px;border-top:1px solid rgba(181,242,251,.74);border-bottom:1px solid rgba(181,242,251,.42);background:linear-gradient(110deg,rgba(1,7,12,.95),rgba(11,27,34,.84));box-shadow:0 18px 55px rgba(0,0,0,.48);text-align:center}.opening-card small{display:block;color:#9fe9f2;font:700 13px/1 RelayDisplay,sans-serif;letter-spacing:.2em}.opening-card h1{margin:10px 0 0;font:900 clamp(34px,4.4vw,56px)/1 CombatKR,sans-serif;letter-spacing:-.08em}.opening-card p{margin:14px 0 0;color:#d8e5e8;font:700 17px/1.65 CombatKR,sans-serif;letter-spacing:-.04em}.opening-card button,.ending button{border:1px solid rgba(255,205,125,.9);border-radius:5px;background:linear-gradient(105deg,#613514,#b86d2e,#6b3916);box-shadow:0 0 0 3px rgba(21,10,5,.75),inset 0 1px rgba(255,248,210,.7);padding:14px 29px;color:#fff6e1;font:900 19px/1 CombatKR,sans-serif;letter-spacing:.1em;cursor:pointer}.opening-card button{margin-top:22px}.opening-card button:hover,.ending button:hover{filter:brightness(1.13);transform:translateY(-1px)}.log{position:absolute;z-index:18;left:50%;top:50%;width:min(760px,86vw);max-height:70vh;overflow:auto;padding:22px 25px;border:1px solid rgba(158,236,246,.42);background:rgba(1,5,10,.96);box-shadow:0 18px 60px rgba(0,0,0,.62);transform:translate(-50%,-50%);display:none}.log.show{display:block}.log h2{margin:0 0 15px;color:#e9faff;font:900 25px/1 CombatKR,sans-serif}.log p{margin:0;padding:10px 0;border-top:1px solid rgba(255,255,255,.09);color:#ecf2f4;font:700 16px/1.55 CombatKR,sans-serif;letter-spacing:-.04em}.log b{margin-right:10px;color:#7beefa}.log .command b{color:#ffca7c}.ending{position:absolute;z-index:12;inset:0;display:none;place-items:center;background:rgba(0,2,6,.55);text-align:center}.ending.show{display:grid}.ending>div{padding:25px 34px 29px;border-top:1px solid #b7f7ff;border-bottom:1px solid rgba(183,247,255,.5);background:linear-gradient(110deg,rgba(1,9,15,.94),rgba(11,32,40,.87))}.ending small{display:block;color:#9ceaf1;font:700 13px/1 RelayDisplay,sans-serif;letter-spacing:.2em}.ending b{display:block;margin-top:10px;font:900 36px/1 CombatKR,sans-serif;letter-spacing:-.07em}.ending p{margin:13px 0 20px;color:#e6eff0;font:700 17px/1.55 CombatKR,sans-serif;letter-spacing:-.04em}@keyframes copyIn{to{opacity:1;transform:none}}@keyframes glyph{50%{transform:scale(1.04);opacity:.64}}@keyframes continue{50%{transform:translateY(5px);opacity:.42}}@keyframes enemyEntry{from{opacity:0;transform:translateY(22px) scale(.9)}to{opacity:1;transform:none}}@keyframes alertPulse{to{opacity:.42}}@media(max-aspect-ratio:4/5){.scene:before{background-position:58% center}.scene:after{background:radial-gradient(ellipse at 50% 28%,rgba(96,215,239,.13),transparent 31%),linear-gradient(0deg,rgba(0,2,6,.99) 2%,rgba(0,2,6,.76) 43%,rgba(0,2,6,.17))}.story-head{right:50%;top:3%;gap:11px;transform:translateX(50%)}.story-head button{font-size:13px}.story-head button small{min-width:20px;height:18px;font-size:9px}.chapter{left:50%;top:10%;transform:translateX(-50%);text-align:center;white-space:nowrap}.chapter small{font-size:10px}.chapter b{font-size:19px}.chapter i{margin:9px auto 0}.operator{right:50%;bottom:23%;width:min(74vw,430px);transform:translateX(50%) translateX(42px) scale(.97)}.scene[data-speaker="mira"] .operator{transform:translateX(50%)}.relay-glyph{right:50%;top:17%;width:74vw;transform:translateX(50%)}.enemy-entry .null{left:14%;bottom:32%;width:38vw}.enemy-entry .drone{right:9%;top:26%;width:34vw}.dialogue{min-height:36%;padding:0 9% 8.5%;align-items:flex-end}.copy{width:100%;min-height:113px}.speaker{font-size:22px}.speaker:before{width:4px;height:25px}.line{margin-top:12px;font-size:21px;line-height:1.52}.continue{right:8%;bottom:8.1%;font-size:24px}.status{right:50%;bottom:2%;transform:translateX(50%);font-size:9px;white-space:nowrap}.opening-card{padding:22px 20px}.opening-card p{font-size:15px}.opening-card button{font-size:17px}.ending b{font-size:28px}.ending p{font-size:15px}.log{padding:18px}.log h2{font-size:21px}.log p{font-size:14px}}
+  </style>
+  <style>
+    /* V0.14: 이전 프롤로그 빌드의 적 등장 일러스트를 그대로 복구해요. */
+    .enemy-entry{background:none;opacity:0;transform:scale(1.025);transition:opacity .42s ease,transform .7s cubic-bezier(.16,.84,.22,1)}
+    .scene[data-encounter="true"] .enemy-entry{opacity:1;transform:none}
+    .enemy-entry:before{display:block}.enemy-entry img{display:block}
+    .scene[data-encounter="true"]:after{background:linear-gradient(0deg,rgba(0,2,6,.98) 2%,rgba(0,2,6,.78) 26%,rgba(0,2,6,.05) 64%,rgba(0,2,6,.22))}
+  
+
+/* V0.27 — story typography master: identical to P-01 AFTER ACTION. */
+.story-head button{font-size:16px}
+.chapter small{font-size:13px}.chapter b{font-size:29px}
+.speaker{font-size:20px!important;line-height:1!important;letter-spacing:-.018em!important}
+.speaker:before{height:20px!important}
+.line{margin-top:14px!important;font-size:22px!important;font-weight:600!important;line-height:1.68!important;letter-spacing:-.018em!important}
+.opening-card p,.ending p{font-size:17px!important;line-height:1.65!important}
+.log p{font-size:16px!important;line-height:1.55!important}
+@media(max-width:760px), (max-aspect-ratio:4/5){
+  .story-head button{font-size:13px}.chapter small{font-size:10px}.chapter b{font-size:19px}
+  .speaker{font-size:17px!important}.speaker:before{height:20px!important}
+  .line{font-size:17px!important;line-height:1.58!important}
+  .opening-card p,.ending p{font-size:15px!important}.log p{font-size:14px!important}
+}
+.scene[data-encounter="true"] .enemy-entry .null{left:22%;bottom:31%;width:min(21vw,286px);filter:brightness(1.55) contrast(1.16) drop-shadow(0 0 22px rgba(255,76,61,.78))}
+.scene[data-encounter="true"] .enemy-entry .drone{right:27%;top:15%;width:min(16vw,212px);filter:brightness(1.7) contrast(1.15) drop-shadow(0 0 22px rgba(112,228,255,.78))}
+.encounter-keyart{position:absolute;z-index:3;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;pointer-events:none;transition:opacity .42s ease}
+.scene[data-encounter="true"] .encounter-keyart{opacity:1}
+.scene[data-encounter="true"] .operator,.scene[data-encounter="true"] .enemy-entry{opacity:0}
+.operator{width:auto;height:min(88vh,820px);right:12%;bottom:-7%;object-fit:contain;object-position:center bottom}
+@media(max-aspect-ratio:4/5){.scene[data-encounter="true"] .enemy-entry .null{left:8%;bottom:35%;width:43vw}.scene[data-encounter="true"] .enemy-entry .drone{right:8%;top:18%;width:34vw}}
+@media(max-aspect-ratio:4/5){.scene[data-encounter="true"] .encounter-keyart{object-fit:contain;object-position:center 28%;background:linear-gradient(180deg,#07101a 0%,#050910 68%,#010204 100%)}}
+@media(max-aspect-ratio:4/5){.operator{width:min(74vw,430px);height:auto;right:50%;bottom:23%}}
+</style>
+<style data-af-story-controls="8aeedc011a23ade1fe983ac06dd40c5692539d7cfc4edc04d684185a5f228f90">/* AFTER SIGNAL story controls contract V1.1 — P-00 active: HIDE [H] AUTO [A] LOG [L] SKIP [S] */
+.af-story-controls{
+  position:absolute!important;z-index:40!important;top:max(16px,env(safe-area-inset-top))!important;
+  right:max(22px,env(safe-area-inset-right))!important;left:auto!important;bottom:auto!important;
+  display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:15px!important;
+  width:auto!important;padding:5px 8px!important;border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;
+}
+.af-story-controls .af-story-control{
+  appearance:none!important;display:inline-flex!important;align-items:center!important;gap:7px!important;
+  min-width:0!important;min-height:0!important;margin:0!important;padding:3px 0!important;border:0!important;
+  border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#f5f7fb!important;
+  font:900 15px/1.05 RelayDisplay,CombatKR,"Noto Sans KR",system-ui,sans-serif!important;
+  letter-spacing:-.025em!important;text-shadow:0 2px 5px #000,0 0 10px rgba(0,0,0,.78)!important;cursor:pointer!important;
+}
+.af-story-controls .af-story-control kbd{
+  display:inline-grid!important;place-items:center!important;min-width:23px!important;height:22px!important;
+  padding:0 5px!important;border:1px solid rgba(235,241,249,.72)!important;border-radius:6px!important;
+  background:rgba(4,9,16,.54)!important;color:#f5f7fb!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  font:800 11px/1 RelayDisplay,ui-monospace,monospace!important;text-shadow:none!important;
+}
+.af-story-controls .af-story-control.active{color:#83f5f8!important}
+.af-story-controls .af-story-control:hover,.af-story-controls .af-story-control:focus-visible{color:#ffd38a!important;outline:none!important}
+.af-story-controls .af-story-control:focus-visible kbd{border-color:#ffd38a!important;box-shadow:0 0 0 2px rgba(255,211,138,.2)!important}
+.af-story-controls [data-af-story-action="sound"]{display:none!important}
+/* The actual log panel is never normalized as a button. Keep it above the
+   P-00 opening veil so LOG remains usable on the entry scene. */
+.log.show,[role="dialog"].log.show{z-index:45!important}
+@media(max-width:700px){
+  .af-story-controls{top:max(10px,env(safe-area-inset-top))!important;right:max(9px,env(safe-area-inset-right))!important;transform:none!important;gap:9px!important;padding:3px!important}
+  .af-story-controls .af-story-control{gap:4px!important;font-size:12px!important}
+  .af-story-controls .af-story-control kbd{min-width:19px!important;height:18px!important;padding:0 3px!important;border-radius:5px!important;font-size:9px!important}
+}
+@media(max-width:390px){.af-story-controls{gap:7px!important}.af-story-controls .af-story-control{font-size:11px!important}}
+</style><script src="../shared/foundation/AFTERSIGNAL_STAGE_FLOW_V1.js?build=20260816m5portrait4"></script></head>
+<body>
+  <main id="scene" class="scene" data-speaker="narration" aria-label="AFTERSIGNAL 프롤로그 P-01">
+    <div class="scan"></div><div class="relay-glyph"></div>
+    <img class="operator" src="../assets/final_2p5d_v066/characters/mira/standing_2026_09_23/MIRA_VOSS_STANDING_FRESH_A001.png" alt="미라 보스">
+    <img class="encounter-keyart" src="../assets/4417b88ebba3ca868510.webp" alt="미라와 정비 구역 적들의 대치">
+    <div class="enemy-entry" aria-hidden="true"><img class="null" src="../assets/enemies_renewal_v066/enemies/prologue/EN-P-01/IDLE_FRONT.webp" alt=""><img class="drone" src="../assets/enemies_renewal_v066/enemies/prologue/EN-P-02/IDLE_FRONT.webp" alt=""></div>
+    <div class="chapter"><small>PROLOGUE // P-01 · R-0 LUMEN</small><b>죽은 도시가 부르는 밤</b><i></i></div>
+    <nav class="story-head" aria-label="스토리 제어"><button id="hide" type="button">HIDE <small>H</small></button><button id="auto" type="button">AUTO <small>A</small></button><button id="logButton" type="button">LOG <small>L</small></button><button id="skip" type="button">SKIP <small>S</small></button></nav>
+    <section id="dialogue" class="dialogue" aria-live="polite"><div class="copy"><div id="speaker" class="speaker" data-role="narration">기록</div><p id="line" class="line"></p></div><div class="continue">⌄</div></section>
+    <div id="status" class="status">TAP / SPACE · 다음 대사</div>
+    <section id="opening" class="opening"><div class="opening-card"><small>RELAY MEMORY // ENTRY 01</small><h1>차가운 기동</h1><p>폐쇄 릴레이 기지 R-0 「루멘」.<br>기억 없이 깨어난 사령관의 첫 기록을 재생합니다.</p><button id="begin" type="button">기록 재생</button></div></section>
+    <aside id="log" class="log" aria-label="대화 기록"><h2>RELAY LOG</h2><div id="logEntries"></div></aside>
+    <section id="ending" class="ending"><div><small>OPERATION LINK READY</small><b>전투 준비 완료</b><p>비상 전원을 복구하고 제어실까지 이동하세요.</p><button id="enterBattle" type="button">전투 진입</button></div></section>
+  </main>
+  <script>
+    const scenes=[
+      {speaker:'기록',role:'narration',text:'폐쇄 릴레이 기지 R-0 「루멘」. 결빙된 배관에서 하얀 수증기가 새고, 비상등은 심장 박동보다 늦게 켜진다. 성에 낀 생체 캡슐 하나가 뒤늦게 열린다.'},
+      {speaker:'기록',role:'narration',text:'사령관이 생체 캡슐에서 깨어난다. 자신의 이름도, 이곳에 온 이유도 설명할 기억은 남아 있지 않다.'},
+      {speaker:'사령관',role:'command',text:'…여긴 어디지? 내가 누구였는지조차 기억나지 않아.'},
+      {speaker:'미라 보스',role:'mira',text:'의식 회복 확인. 호칭은 보류하겠습니다. 일어설 수 있습니까?'},
+      {speaker:'사령관',role:'command',text:'몸은 움직여. 하지만 당신도, 나도 기억나지 않아.'},
+      {speaker:'미라 보스',role:'mira',text:'그럼 지금은 생존자입니다. 현장 판단과 교전은 제가 맡겠습니다.'},
+      {speaker:'기록',role:'narration',text:'미라는 사령관을 알아본 눈빛을 숨긴 채 모르는 사람처럼 거리를 둔다. 사령관은 그 짧은 망설임만 기억해 둔다.'},
+      {speaker:'기록',role:'narration',text:'기지는 수십 년 전에 폐쇄됐다. 그러나 방금 수신된 구조 신호가 제어실을 반복 호출하고 있다.'},
+      {speaker:'시설 시스템',role:'narration',text:'생체 권한 일치. 릴레이 지휘 권한을 복구합니다.'},
+      {speaker:'사령관',role:'command',text:'중지해. 기억도 없는 사람에게 지휘권을 넘기면 안 돼.'},
+      {speaker:'미라 보스',role:'mira',text:'동의합니다. 권한은 잠급니다. 당신은 제 링크에 들어오는 위치와 위험 정보만 읽어 주세요. 결정은 제가 하겠습니다.'},
+      {speaker:'미라 보스',role:'mira',text:'기지 로그와 제 기억의 순서가 맞지 않습니다. 확인되지 않은 건 단정하지 않겠습니다. 원본부터 확보하죠.'},
+      {speaker:'기록',role:'narration',text:'사령관이 단말에 손을 대자 폐쇄된 전술 지도가 열린다. 낯선 정보인데도 위험 신호의 순서만은 손이 먼저 알아본다.'},
+      {speaker:'사령관',role:'command',text:'오른쪽 상부에 신호가 하나 더 있어. 내가 어떻게 읽은 건지는 모르겠어.'},
+      {speaker:'미라 보스',role:'mira',text:'설명은 살아남은 뒤에 듣겠습니다. 관측만 계속해 주세요. 비상 전원을 복구하고 제어실까지 가겠습니다.'},
+      {speaker:'기록',role:'narration',encounter:true,text:'정비 구역의 차단문이 찢어지며 휴면 널 스캐빈저와 손상 정비 드론이 앞을 막는다.'},
+      {speaker:'미라 보스',role:'mira',encounter:true,text:'휴면 널 스캐빈저, 손상 정비 드론 초동 패턴 확인. 약점 구간을 열겠습니다.'},
+      {speaker:'사령관',role:'command',encounter:true,text:'왼쪽 개체는 미끼야. 뒤쪽 드론의 충전 신호가 먼저 올라가고 있어.'},
+      {speaker:'미라 보스',role:'mira',encounter:true,text:'관측 확인. 사격과 이동 판단은 제가 맡겠습니다. 링크를 놓치지 마세요.'}
+    ];
+    let index=0,playing=false,autoTimer=0,hidden=false; const history=[];
+    const $=id=>document.getElementById(id),scene=$('scene'),speaker=$('speaker'),line=$('line');
+    function render(){const current=scenes[index];scene.dataset.speaker=current.role;scene.dataset.encounter=String(Boolean(current.encounter));speaker.textContent=current.speaker;speaker.dataset.role=current.role;line.textContent=current.text;line.classList.remove('line');void line.offsetWidth;line.classList.add('line');$('status').textContent=`${index+1} / ${scenes.length} · TAP / SPACE`;}
+    function advance(){if(!playing)return;if(index<scenes.length-1){history.push(scenes[index]);index++;render();}else{history.push(scenes[index]);playing=false;$('ending').classList.add('show');window.clearTimeout(autoTimer)}}
+    function begin(){playing=true;$('opening').classList.add('hide');render();}
+    function tick(){if($('auto').classList.contains('active')&&playing){advance();autoTimer=window.setTimeout(tick,Math.max(4200,window.AfterSignalStoryVoice?.holdMs()||0))}}
+    function toggleAuto(){const active=$('auto').classList.toggle('active');$('auto').setAttribute('aria-pressed',String(active));if(active)tick();else window.clearTimeout(autoTimer)}
+    function log(){const view=$('log');view.classList.toggle('show');$('logEntries').innerHTML=[...history,scenes[index]].map(item=>`<p class="${item.role}"><b>${item.speaker}</b>${item.text}</p>`).join('');}
+    $('begin').addEventListener('click',begin);$('dialogue').addEventListener('click',advance);$('auto').addEventListener('click',toggleAuto);$('logButton').addEventListener('click',log);$('skip').addEventListener('click',()=>{index=scenes.length-1;render();advance()});$('hide').addEventListener('click',()=>{hidden=!hidden;$('dialogue').style.opacity=hidden?'0':'1';$('status').style.opacity=hidden?'0':'1';$('hide').classList.toggle('active',hidden)});$('enterBattle').addEventListener('click',()=>parent.postMessage({type:'aftersignal:navigate',screen:'combat'},'*'));
+    window.addEventListener('keydown',event=>{if(event.key===' '||event.key==='Enter'||event.key==='ArrowRight'){event.preventDefault();advance()}if(event.key.toLowerCase()==='a')toggleAuto();if(event.key.toLowerCase()==='l')log();if(event.key.toLowerCase()==='s'){index=scenes.length-1;render();advance()}if(event.key.toLowerCase()==='h')$('hide').click();if(event.key==='Escape')$('log').classList.remove('show')});
+    render();
+  </script>
+<script>
+(() => {
+  if (window.parent === window) return;
+  let sent = false;
+  const unlock = () => {
+    if (sent) return;
+    sent = true;
+    window.parent.postMessage({ type: "aftersignal:audio-unlock" }, "*");
+  };
+  window.addEventListener("pointerdown", unlock, { passive: true });
+  window.addEventListener("keydown", unlock);
+  const result = document.getElementById("resultOverlay");
+  if (result) new MutationObserver(() => {
+    const won = !result.classList.contains("hidden") && (document.getElementById("resultText")?.textContent || "").includes("3/3 회수 완료");
+    if (won) window.parent.postMessage({ type: "aftersignal:bgm", cue: "p04_resolution" }, "*");
+  }).observe(result, { attributes: true, attributeFilter: ["class"] });
+})();
+</script>
+<script data-af-story-controls="8aeedc011a23ade1fe983ac06dd40c5692539d7cfc4edc04d684185a5f228f90">(()=>{
+  "use strict";
+  const specs={
+    hide:{ids:["hide","hideButton"],label:"HIDE",key:"H",code:"KeyH"},
+    auto:{ids:["auto","autoButton"],label:"AUTO",key:"A",code:"KeyA"},
+    // Some early story pages use #log for the panel and #logButton for the
+    // actual control. The control must always win the ID lookup.
+    log:{ids:["logButton","log"],label:"LOG",key:"L",code:"KeyL"},
+    skip:{ids:["skip","skipButton"],label:"SKIP",key:"S",code:"KeyS"},
+    sound:{ids:["sound","soundButton","bgmButton"],label:"BGM",key:"M",code:"KeyM"}
+  };
+  const find=spec=>{
+    const candidates=spec.ids.map(id=>document.getElementById(id)).filter(Boolean);
+    return candidates.find(node=>node.tagName==="BUTTON")||candidates[0];
+  };
+  const render=(button,action,spec)=>{
+    if(!button)return;
+    button.dataset.afStoryAction=action;
+    button.classList.add("af-story-control");
+    button.innerHTML=`<span>${spec.label}</span><kbd aria-hidden="true">${spec.key}</kbd>`;
+    button.setAttribute("aria-keyshortcuts",spec.key);
+  };
+  const normalize=()=>{
+    const controls=Object.entries(specs).map(([action,spec])=>[action,spec,find(spec)]).filter(([,spec,node])=>node&&spec.label!=="BGM");
+    const nav=controls[0]?.[2]?.closest("nav,.story-head,.controls,.top-actions,.story-controls")||controls[0]?.[2]?.parentElement;
+    if(!nav)return false;
+    nav.classList.add("af-story-controls");
+    controls.forEach(([action,spec,node])=>{if(node.parentElement!==nav)nav.append(node);render(node,action,spec)});
+    const sound=find(specs.sound);if(sound){sound.dataset.afStoryAction="sound";sound.classList.add("af-story-control")}
+    return true;
+  };
+  normalize();
+  document.addEventListener("keydown",event=>{
+    if(event.repeat||event.altKey||event.ctrlKey||event.metaKey)return;
+    const target=event.target;if(target?.matches?.("input,textarea,select,[contenteditable=true]"))return;
+    const entry=Object.entries(specs).find(([,spec])=>spec.code===event.code);if(!entry)return;
+    const button=find(entry[1]);if(!button||button.disabled)return;
+    // P-00 already owns a window-level shortcut listener. Stop this event at
+    // document so one physical key press cannot toggle the action twice.
+    event.preventDefault();event.stopPropagation();button.click();
+  });
+  window.AfterSignalStoryControls=Object.freeze({version:"1.1",normalize,specs});
+})();
+</script><script data-af-stage-flow-story="1.0">(()=>{const screen="prologue",flow=window.AfterSignalStageFlow;if(!flow)return;const legacyNext=typeof window.next==="function"?window.next:null;if(legacyNext)window.next=function(){try{if(typeof index!=="undefined"&&typeof SCENES!=="undefined"&&index>=SCENES.length-1)return flow.continueFrom(screen)}catch{}return legacyNext.apply(this,arguments)};for(const id of ["endAction","enterBattle"]){const node=document.getElementById(id);node?.addEventListener("click",event=>{event.preventDefault();event.stopImmediatePropagation();flow.continueFrom(screen)},{capture:true})}})();</script><script src="../shared/story-ui/AFTERSIGNAL_STORY_VOICE_V1.js?build=20260929vl1" data-af-story-voice="prologue"></script></body>
+</html>

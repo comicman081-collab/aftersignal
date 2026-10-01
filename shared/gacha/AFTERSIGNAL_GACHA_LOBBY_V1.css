@@ -1,0 +1,161 @@
+/* AFTER SIGNAL — recruit (대원 모집) entry points in the shelter lobby V1 (2026-09-26, GACHA_RECRUIT_V1).
+   Loaded after AFTERSIGNAL_SHELTER_HOME_V4.css. Adds one grid area ("recruit") under the idle chip in each of the home's
+   three layouts (desktop, short landscape, portrait), the roster toolbar / 미보유 cards / 한계 돌파 stars and the
+   출격 편성 dialog. The recruit screen itself is styled by AFTERSIGNAL_GACHA_UI_V1.css (gc- prefix). */
+
+/* ---------- home: recruit chip under the idle-supply chip ---------- */
+#home.home-v4{grid-template-areas:"head . idle" ". . recruit" "today . short" "story plate short"}
+#home.home-v4 .home-recruit-chip{grid-area:recruit;align-self:start;position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;column-gap:11px;width:100%;min-width:0;min-height:0;margin:0;padding:10px 12px;border:1px solid rgba(199,155,255,.6);background:linear-gradient(150deg,rgba(34,20,54,.95),rgba(8,14,24,.93));box-shadow:0 12px 30px rgba(0,0,0,.42),inset 0 1px rgba(236,220,255,.1);color:#f4efff;text-align:left;cursor:pointer;overflow:hidden;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#home.home-v4 .home-recruit-chip:before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.13) 45%,transparent 60%);transform:translateX(-120%);animation:hrcSweep 5.2s ease-in-out 1.2s infinite;pointer-events:none}
+#home.home-v4 .home-recruit-chip:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,#6af1f4,#c79bff 55%,#ffc972)}
+#home.home-v4 .home-recruit-chip>i{position:relative;display:grid;place-items:center;width:34px;height:34px;border:1px solid rgba(199,155,255,.65);background:radial-gradient(circle,rgba(199,155,255,.28),transparent 70%)}
+#home.home-v4 .home-recruit-chip svg{width:20px;height:20px;stroke:#ead9ff;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#home.home-v4 .hrc-copy{position:relative;display:flex;flex-direction:column;gap:3px;min-width:0}
+#home.home-v4 .hrc-copy small{display:block;font:800 12px/1.2 SignalKR,"Noto Sans KR",system-ui,sans-serif;color:#d8c5ff;white-space:nowrap}
+#home.home-v4 .hrc-copy b{display:block;margin:0;font:900 clamp(17px,2.4vh,21px)/1.1 SignalKR,"Noto Sans KR",system-ui,sans-serif;color:#fff;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#home.home-v4 .hrc-badge{position:relative;display:flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid rgba(199,155,255,.6);background:rgba(44,24,70,.9);color:#efe4ff;font-style:normal;font-size:12px;font-weight:800;white-space:nowrap}
+#home.home-v4 .home-recruit-chip:hover{filter:brightness(1.14)}
+#home.home-v4 .home-recruit-chip:focus-visible{outline:2px solid #fff2b0;outline-offset:2px}
+#home.home-v4 .home-recruit-chip:is([data-state="free"],[data-state="first"],[data-state="mileage"]){border-color:rgba(255,207,131,.85);box-shadow:0 0 0 1px rgba(255,207,131,.16),0 0 26px rgba(255,190,90,.2),0 12px 30px rgba(0,0,0,.42)}
+#home.home-v4 .home-recruit-chip:is([data-state="free"],[data-state="first"],[data-state="mileage"]) .hrc-badge{border-color:#ffcf83;background:linear-gradient(135deg,#6e4d17,#33250d);color:#fff4dc}
+#home.home-v4 .home-recruit-chip:is([data-state="free"],[data-state="first"]) .hrc-badge:before{content:"";width:6px;height:6px;border-radius:50%;background:#ffd98a;box-shadow:0 0 8px #ffc15a;animation:hicPulse 2.4s ease-in-out infinite}
+#home.home-v4 .home-recruit-chip:is([data-state="free"],[data-state="first"]) .hrc-copy b{color:#ffe7b0}
+@keyframes hrcSweep{0%,62%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+
+/* short landscape (phones): compact chip; the area sits between the daily list row and the story row */
+@media (max-height:560px) and (orientation:landscape){
+  #home.home-v4{grid-template-areas:"today . idle" ". . recruit" "story . plate"}
+  #home.home-v4 .home-recruit-chip{column-gap:8px;padding:6px 9px 7px}
+  #home.home-v4 .home-recruit-chip>i{width:27px;height:27px}
+  #home.home-v4 .home-recruit-chip svg{width:16px;height:16px}
+  #home.home-v4 .hrc-copy{gap:1px}
+  #home.home-v4 .hrc-copy small{font-size:10.5px}
+  #home.home-v4 .hrc-copy b{font-size:15px}
+  #home.home-v4 .hrc-badge{gap:4px;padding:3px 6px;font-size:10.5px}
+}
+@media (max-height:560px) and (orientation:landscape) and (max-width:940px){
+  #home.home-v4 .home-recruit-chip{grid-template-columns:minmax(0,1fr) auto}
+  #home.home-v4 .home-recruit-chip>i{display:none}
+}
+/* portrait: a second chip right under the idle chip, same right edge */
+@media (max-aspect-ratio:4/5){
+  #home.home-v4{grid-template-rows:auto auto minmax(0,1fr) auto auto auto;grid-template-areas:"idle" "recruit" "." "plate" "story" "today"}
+  #home.home-v4 .home-recruit-chip{justify-self:end;width:auto;max-width:48%;grid-template-columns:minmax(0,auto);row-gap:5px;padding:7px 11px 9px}
+  #home.home-v4 .home-recruit-chip>i{display:none}
+  #home.home-v4 .hrc-copy{gap:2px}
+  #home.home-v4 .hrc-copy small{font-size:11px}
+  #home.home-v4 .hrc-copy b{font-size:17px}
+  #home.home-v4 .hrc-badge{justify-self:start;padding:3px 7px;font-size:10.5px}
+}
+/* the empty-crew nameplate (no owned character yet) is a call to action */
+#home.home-v4 .home-nameplate[data-empty="true"] .hf-step{visibility:hidden}
+#home.home-v4 .home-nameplate[data-empty="true"] .hf-body small em{display:none}
+#home.home-v4 .home-nameplate[data-empty="true"] .hf-body small span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#home.home-v4 .home-nameplate[data-empty="true"] .hf-info{border-color:#ffcf83;background:linear-gradient(135deg,#6e4d17,#33250d);color:#fff4dc}
+
+/* ---------- roster: toolbar, 한계 돌파 stars, 미보유 cards ---------- */
+.roster-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px}
+.roster-tools .rt-count{margin:0 auto 0 0;color:#a9c7cc;font-size:14px;font-weight:800}
+.roster-tools .rt-count b{color:#f3ffff;font-size:19px}
+.roster-tools .rt-count span{color:#7f9ea5}
+.rt-btn{display:inline-flex;flex-direction:column;align-items:flex-start;gap:1px;min-height:44px;padding:7px 14px;border:1px solid #4f8a94;background:#08202a;color:#e6fdff;font-size:14.5px;font-weight:900;line-height:1.15;cursor:pointer}
+.rt-btn small{font:800 9.5px/1 ui-monospace,monospace;letter-spacing:.14em;color:#7fb6bf}
+.rt-btn:hover{border-color:#75edf2;filter:brightness(1.12)}
+.rt-btn.rt-recruit{border-color:#ffcf83;background:linear-gradient(135deg,#6e4d17,#33250d);color:#fff4dc}
+.rt-btn.rt-recruit small{color:#ffd99a}
+.rt-btn:focus-visible{outline:2px solid #fff2b0;outline-offset:2px}
+.portrait-card .crew-stars,.detail-stars .crew-stars{display:flex;gap:3px;margin:4px 0 5px;font-size:0;line-height:0}
+.crew-stars i{display:block;width:11px;height:11px;background:#2b3f47;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.crew-stars i.on{background:linear-gradient(#fff5cf,#ffc45c)}
+.portrait-card.recruit-locked{cursor:pointer;opacity:.6}
+.portrait-card.recruit-locked .portrait-frame img{filter:grayscale(.9) brightness(.5)}
+.portrait-card.recruit-locked:hover{opacity:.92;border-color:#c79bff}
+.portrait-card.recruit-locked small{color:#c9b4ff}
+.portrait-card.recruit-empty{cursor:pointer;border-color:#ffcf83;background:radial-gradient(circle at 50% 30%,rgba(255,201,114,.18),transparent 60%),#0b1a22}
+.portrait-card.recruit-empty .locked-mark{color:#ffcf83}
+.portrait-card.recruit-empty b{color:#ffe7b0}
+.detail-stars{display:flex;align-items:center;gap:8px;margin:0 0 6px}
+.detail-stars .crew-stars{margin:0}
+.detail-stars .crew-stars i{width:16px;height:16px}
+.char-label .detail-stars small{font-size:12.5px;font-weight:800;color:#ffe3a6;text-shadow:0 1px 6px #000}
+@media (max-height:560px) and (orientation:landscape){
+  .roster-tools{margin-bottom:8px;gap:6px}
+  .rt-btn{min-height:36px;padding:5px 10px;font-size:13px}
+  .portrait-card .crew-stars{margin:2px 0 3px}
+  .crew-stars i{width:9px;height:9px}
+}
+@media (max-aspect-ratio:4/5){
+  .roster-tools .rt-count{flex:1 0 100%;font-size:13px}
+  .rt-btn{flex:1 1 0;align-items:center}
+}
+
+/* ---------- 출격 편성 dialog (owned characters only) ---------- */
+.gcl-formation{width:min(780px,calc(100vw - 24px));max-width:none;max-height:calc(100svh - 24px);margin:auto;padding:0;border:1px solid #5d8791;background:linear-gradient(160deg,rgba(9,26,34,.98),rgba(4,11,17,.98));color:#efffff;box-shadow:0 30px 90px #000;font-family:SignalKR,"Noto Sans KR",system-ui,sans-serif}
+.gcl-formation::backdrop{background:rgba(0,4,8,.74)}
+.gcl-formation button{font:inherit;color:inherit}
+.gcl-f-panel{display:flex;flex-direction:column;gap:12px;max-height:calc(100svh - 26px);padding:16px 18px 16px;overflow:auto}
+.gcl-f-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.gcl-f-head h2{margin:0;font-size:22px;font-weight:900}
+.gcl-f-head h2 small{margin-left:8px;font:800 10px/1 ui-monospace,monospace;letter-spacing:.16em;color:#7cdae1}
+.gcl-f-x{flex:none;width:38px;height:38px;border:1px solid #526d75;background:#0a1c24;cursor:pointer;font-size:17px}
+.gcl-f-note{margin:0;font-size:13px;line-height:1.55;color:#a9c7cc}
+.gcl-f-note b{color:#ffe3a6}
+.gcl-f-slots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0;padding:0;list-style:none}
+.gcl-f-slot{position:relative;display:grid;grid-template-rows:minmax(0,1fr) auto;width:100%;aspect-ratio:1/1.12;padding:0;border:1px solid #466672;background:#0b1c24;overflow:hidden;cursor:pointer;text-align:center}
+.gcl-f-slot img{width:100%;height:100%;min-height:0;object-fit:cover;object-position:50% 20%}
+.gcl-f-slot b{display:block;padding:4px 3px;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#061219}
+.gcl-f-slot[data-rarity="SSR"]{border-color:#ffcf83}
+.gcl-f-slot[data-rarity="SR"]{border-color:#c79bff}
+.gcl-f-slot.gcl-f-empty{place-items:center;grid-template-rows:auto auto;align-content:center;border-style:dashed;cursor:default;color:#6f8f96}
+.gcl-f-slot.gcl-f-empty b{background:none;font-size:11.5px;font-weight:700}
+.gcl-f-no{position:absolute;left:5px;top:5px;z-index:1;min-width:20px;padding:2px 5px;font:900 11px/1.2 ui-monospace,monospace;background:#06141ccc;border:1px solid #5fa9b3;color:#dff9fb}
+.gcl-f-empty .gcl-f-no{position:static;margin-bottom:4px}
+.gcl-f-slot:not(.gcl-f-empty):hover{filter:brightness(1.15)}
+.gcl-f-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.gcl-f-card{position:relative;display:grid;grid-template-rows:auto auto;padding:0;border:1px solid #3a5a64;background:#081820;cursor:pointer;text-align:left;overflow:hidden}
+.gcl-f-card img{width:100%;aspect-ratio:1/1;object-fit:cover;object-position:50% 20%;display:block}
+.gcl-f-card[data-rarity="SSR"] em{color:#ffcf83}
+.gcl-f-card[data-rarity="SR"] em{color:#c79bff}
+.gcl-f-card[aria-pressed="true"]{border-color:#75edf2;box-shadow:inset 0 0 0 2px rgba(117,237,242,.55)}
+.gcl-f-card[aria-pressed="true"] img{filter:brightness(.7)}
+.gcl-f-at{position:absolute;right:6px;top:6px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#6af1f4;color:#03222a;font:900 13px/1 ui-monospace,monospace;box-shadow:0 0 12px rgba(106,241,244,.6)}
+.gcl-f-meta{display:flex;flex-direction:column;gap:1px;padding:5px 7px 6px}
+.gcl-f-meta em{font:900 10px/1 ui-monospace,monospace;font-style:normal;color:#9fdfe6}
+.gcl-f-meta b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gcl-stars{display:flex;gap:2px;margin-top:2px}
+.gcl-stars i{display:block;width:9px;height:9px;background:#2b3f47;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.gcl-stars i.on{background:linear-gradient(#fff5cf,#ffc45c)}
+.gcl-f-card:hover{border-color:#75edf2}
+.gcl-f-card:focus-visible,.gcl-f-slot:focus-visible,.gcl-f-btn:focus-visible,.gcl-f-x:focus-visible{outline:2px solid #fff2b0;outline-offset:2px}
+.gcl-f-none{display:flex;align-items:center;gap:12px;margin:6px 0;color:#a9c7cc}
+.gcl-f-foot{position:sticky;bottom:-16px;display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:0 -18px -16px;padding:10px 18px 12px;background:linear-gradient(transparent,#04101699 12%,#040f15 40%)}
+.gcl-f-msg{margin:0 auto 0 0;color:#ffd99a;font-size:12.5px;font-weight:800}
+.gcl-f-btn{min-height:42px;padding:8px 16px;border:1px solid #4f8a94;background:#08202a;font-weight:900;cursor:pointer}
+.gcl-f-btn:disabled{opacity:.45;cursor:default}
+.gcl-f-btn.gcl-f-main{border-color:#ffcf83;background:linear-gradient(135deg,#6e4d17,#33250d);color:#fff4dc}
+@media (max-height:560px) and (orientation:landscape){
+  .gcl-f-panel{gap:8px;padding:10px 14px 12px}
+  .gcl-f-head h2{font-size:17px}
+  .gcl-f-x{width:32px;height:32px}
+  .gcl-f-note{font-size:11.5px;line-height:1.4}
+  .gcl-f-slots{grid-template-columns:repeat(5,minmax(0,78px));justify-content:start}
+  .gcl-f-grid{grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
+  .gcl-f-meta{padding:3px 5px 4px}
+  .gcl-f-meta b{font-size:11.5px}
+  .gcl-f-foot{bottom:-12px;margin:0 -14px -12px;padding:8px 14px 10px}
+  .gcl-f-btn{min-height:36px;padding:6px 12px;font-size:13px}
+}
+@media (max-aspect-ratio:4/5){
+  .gcl-f-panel{padding:14px 12px}
+  .gcl-f-head h2 small{display:none}
+  .gcl-f-slots{gap:5px}
+  .gcl-f-slot b{font-size:10.5px;padding:3px 2px}
+  .gcl-f-grid{grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:6px}
+  .gcl-f-foot{margin:0 -12px -16px;padding:10px 12px 12px;flex-wrap:wrap}
+  .gcl-f-msg{flex:1 0 100%}
+  .gcl-f-btn{flex:1 1 0;padding:8px 6px}
+}
+@media (prefers-reduced-motion:reduce){
+  #home.home-v4 .home-recruit-chip:before{animation:none;display:none}
+  #home.home-v4 .home-recruit-chip .hrc-badge:before{animation:none!important}
+}

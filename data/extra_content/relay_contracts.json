@@ -1,0 +1,26 @@
+{
+  "id": "relayContracts",
+  "displayName": "릴레이 의뢰",
+  "dailyGenerated": 5,
+  "dailyRequired": 3,
+  "dailyPool": [
+    { "id": "battle_win", "event": "battleWin", "target": 2, "label": "전투 승리 2회" },
+    { "id": "core_hit", "event": "coreHit", "target": 15, "label": "CORE 명중 15회" },
+    { "id": "critical", "event": "critical", "target": 30, "label": "치명타 30회" },
+    { "id": "reload", "event": "reload", "target": 5, "label": "재장전 5회" },
+    { "id": "cover", "event": "cover", "target": 5, "label": "엄폐 5회" },
+    { "id": "ultimate", "event": "ultimate", "target": 3, "label": "필살기 3회" },
+    { "id": "sweep", "event": "signalSweepClear", "target": 1, "label": "신호 소탕전 완료" },
+    { "id": "boss", "event": "bossClear", "target": 1, "label": "보스·중간보스 격파" },
+    { "id": "shop", "event": "shopPurchase", "target": 1, "label": "상점 구매 1회" },
+    { "id": "growth", "event": "characterGrowth", "target": 1, "label": "대원 성장 1회" }
+  ],
+  "weekly": [
+    { "id": "weekly_battle", "event": "battleWin", "target": 15, "label": "전투 15회" },
+    { "id": "weekly_boss", "event": "bossClear", "target": 5, "label": "보스·중간보스 5회" },
+    { "id": "weekly_sweep", "event": "signalSweepClear", "target": 5, "label": "신호 소탕전 5회" },
+    { "id": "weekly_interception", "event": "interceptionClear", "target": 5, "label": "위협체 요격·빠른 전투 5회" },
+    { "id": "weekly_simulation", "event": "simulationScore", "target": 5000, "label": "전술 시뮬레이션 5,000점" },
+    { "id": "weekly_zone", "event": "zoneNode", "target": 5, "label": "무신호 구역 노드 5개" }
+  ]
+}

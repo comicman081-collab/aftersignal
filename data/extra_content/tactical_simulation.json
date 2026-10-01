@@ -1,0 +1,19 @@
+{
+  "id": "tacticalSimulation",
+  "displayName": "전술 시뮬레이션",
+  "resetType": "WEEKLY",
+  "modifierCount": 3,
+  "modifiers": [
+    "magazine_minus_50", "core_damage_plus_70", "ultimate_disabled",
+    "cover_reduction_plus_50", "enemy_projectile_speed_plus_35", "reload_speed_minus_20",
+    "aerial_only", "ultimate_charge_plus_50", "incoming_damage_plus_25"
+  ],
+  "scoreWeights": {
+    "clear": 3000,
+    "remainingSecond": 12,
+    "survivalHp": 18,
+    "coreAccuracy": 20,
+    "critical": 8,
+    "ultimateEfficiency": 400
+  }
+}

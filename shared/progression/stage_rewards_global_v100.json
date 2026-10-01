@@ -1,0 +1,11 @@
+{
+  "version":"1.0",
+  "stages":{
+    "p01":{"stageId":"P-01","title":"차가운 기동","rank":"B","credits":2200,"commanderXp":90,"battleData":600,"coreSignal":0,"weaponModules":2,"next":"postbattle"},
+    "p02":{"stageId":"P-02","title":"끊어진 제어선","rank":"B","credits":3000,"commanderXp":120,"battleData":900,"coreSignal":1,"weaponModules":3,"next":"p03"},
+    "p04":{"stageId":"P-04","title":"남겨진 발자국","rank":"A","credits":4800,"commanderXp":180,"battleData":1600,"coreSignal":2,"weaponModules":8,"next":"prologueContinue"},
+    "p06":{"stageId":"P-06","title":"잠긴 정비선","rank":"A","credits":5600,"commanderXp":210,"battleData":1900,"coreSignal":2,"weaponModules":9,"next":"p07intro"},
+    "p07":{"stageId":"P-07","title":"무신호 감시자","rank":"S","credits":7800,"commanderXp":300,"battleData":2800,"coreSignal":4,"weaponModules":12,"next":"p07outro"},
+    "p08":{"stageId":"P-08","title":"권한 로그 회수","rank":"A","credits":6500,"commanderXp":240,"battleData":2300,"coreSignal":3,"weaponModules":10,"next":"p08outro"}
+  }
+}

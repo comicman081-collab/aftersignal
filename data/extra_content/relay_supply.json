@@ -1,0 +1,8 @@
+{
+  "id": "relaySupply",
+  "displayName": "릴레이 보급소",
+  "resources": ["credits", "battleData"],
+  "rarePassiveResources": [],
+  "clockAuthority": "ResetService.now",
+  "claimPolicy": "ATOMIC_ELAPSED_CAPPED"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "noSignalZone",
+  "displayName": "무신호 구역",
+  "resetType": "WEEKLY",
+  "nodeCountRange": [6, 10],
+  "nodeTypes": ["START", "COMBAT", "ELITE", "SUPPLY", "RECORD", "RISK", "MIDBOSS", "FINAL"],
+  "combatEnemyPools": [
+    ["renewal_scavenger", "renewal_mite"],
+    ["renewal_aerial", "renewal_aerial_guard"],
+    ["renewal_plate", "renewal_scavenger", "renewal_aerial"]
+  ],
+  "midbosses": ["renewal_signal_warden", "renewal_mira_voice_echo"]
+}

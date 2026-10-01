@@ -1,0 +1,237 @@
+:root{
+  --af-ui-cyan:#74eff5;--af-ui-cyan-soft:#8dd5dc;--af-ui-violet:#d69aff;
+  --af-ui-gold:#ffd27e;--af-ui-danger:#ff7084;--af-ui-bg:rgba(2,14,21,.94);
+  --af-ui-panel:rgba(3,14,22,.90);--af-ui-line:rgba(103,206,216,.34);
+  --af-ui-safe-bottom:env(safe-area-inset-bottom,0px)
+}
+html[data-af-battle-ui="1.3"],html[data-af-battle-ui="1.3"] body{
+  background:#02060a;color:#eefcff;font-family:CombatKR,SignalKR,"Noto Sans KR",sans-serif
+}
+html[data-af-battle-ui="1.3"] .viewport{isolation:isolate}
+html[data-af-battle-ui="1.3"] .viewport:after{
+  content:"";position:absolute;z-index:2;inset:0;pointer-events:none;
+  background:linear-gradient(0deg,rgba(0,4,9,.78),transparent 27%),radial-gradient(circle at 50% 35%,transparent 42%,rgba(0,2,7,.58))
+}
+html[data-af-battle-ui="1.3"] .topbar,
+html[data-af-battle-ui="1.3"] .battle-topbar{
+  position:absolute!important;z-index:18!important;left:2%!important;right:2%!important;top:1.6%!important;
+  display:grid!important;grid-template-columns:190px 1fr 190px!important;align-items:start!important;gap:12px!important;
+  pointer-events:none!important
+}
+html[data-af-battle-ui="1.3"] .toggle,
+html[data-af-battle-ui="1.3"] .fire-toggle,
+html[data-af-battle-ui="1.3"] .tactical-auto{
+  pointer-events:auto!important;min-height:58px!important;padding:8px 14px!important;
+  border:1px solid rgba(132,204,220,.38)!important;border-radius:999px!important;
+  background:rgba(2,12,19,.78)!important;color:#d7e9ec!important;font:900 15px/1 CombatKR,SignalKR,sans-serif!important;
+  cursor:pointer!important;box-shadow:none!important
+}
+html[data-af-battle-ui="1.3"] .toggle.on,
+html[data-af-battle-ui="1.3"] .fire-toggle.on,
+html[data-af-battle-ui="1.3"] .tactical-auto.on{
+  border-color:#ffc06a!important;background:linear-gradient(105deg,rgba(111,55,11,.92),rgba(15,22,31,.9))!important;color:#fff!important
+}
+html[data-af-battle-ui="1.3"] .toggle small,
+html[data-af-battle-ui="1.3"] .fire-toggle small,
+html[data-af-battle-ui="1.3"] .tactical-auto small{
+  display:block!important;margin-top:5px!important;color:#a2c4cc!important;font:700 10px/1 RelayDisplay,ui-monospace,monospace!important;letter-spacing:.12em!important
+}
+html[data-af-battle-ui="1.3"] .mission,
+html[data-af-battle-ui="1.3"] .operation-title{text-align:center!important;text-shadow:0 2px 8px #000!important}
+html[data-af-battle-ui="1.3"] .mission small,
+html[data-af-battle-ui="1.3"] .operation-title small{color:#c7faff!important;font:700 11px/1 RelayDisplay,ui-monospace,monospace!important;letter-spacing:.18em!important}
+html[data-af-battle-ui="1.3"] .mission b,
+html[data-af-battle-ui="1.3"] .operation-title b{display:block!important;margin-top:5px!important;font:900 clamp(23px,2.8vw,38px)/1 CombatKR,SignalKR,sans-serif!important;letter-spacing:-.055em!important}
+html[data-af-battle-ui="1.3"] .mission span{display:block;margin-top:7px;color:#cdbbe3;font:700 10px/1 RelayDisplay;letter-spacing:.12em}
+html[data-af-battle-ui="1.3"] .cutscene-toggle{
+  position:absolute!important;z-index:19!important;right:2.5%!important;top:10.2%!important;
+  min-height:34px!important;padding:7px 13px!important;border:1px solid rgba(215,145,255,.56)!important;border-radius:999px!important;
+  color:#ead7f5!important;font:800 11px/1 RelayDisplay,ui-monospace,sans-serif!important;letter-spacing:.08em!important;
+  background:rgba(22,8,34,.68)!important;box-shadow:0 0 15px rgba(191,100,255,.16)!important;
+  pointer-events:auto!important;touch-action:manipulation!important;cursor:pointer!important
+}
+html[data-af-battle-ui="1.3"] .cutscene-toggle.on{color:#fff!important;border-color:#e7a7ff!important;background:linear-gradient(105deg,rgba(79,27,105,.88),rgba(16,17,32,.82))!important}
+html[data-af-battle-ui="1.3"] .feed,
+html[data-af-battle-ui="1.3"] .command-feed{
+  position:absolute!important;z-index:14!important;left:2%!important;top:12%!important;width:min(345px,33vw)!important;
+  min-height:0!important;padding:7px 10px!important;border:0!important;border-left:3px solid rgba(116,238,244,.66)!important;
+  background:linear-gradient(90deg,rgba(1,10,17,.58),rgba(1,10,17,.04))!important;
+  pointer-events:none!important;text-shadow:0 2px 5px #000!important;backdrop-filter:none!important
+}
+html[data-af-battle-ui="1.3"] .feed small,
+html[data-af-battle-ui="1.3"] .command-feed b{color:#82ecf3!important;font:700 9px/1 RelayDisplay,ui-monospace,monospace!important;letter-spacing:.16em!important}
+html[data-af-battle-ui="1.3"] .feed b,
+html[data-af-battle-ui="1.3"] .command-feed span{display:block!important;margin-top:5px!important;color:#e7f8fa!important;font:800 13px/1.4 CombatKR,SignalKR,sans-serif!important}
+html[data-af-battle-ui="1.3"] .party{
+  position:absolute!important;z-index:21!important;left:50%!important;right:auto!important;bottom:calc(1.5% + var(--af-ui-safe-bottom))!important;top:auto!important;
+  transform:translateX(-50%)!important;display:flex!important;gap:10px!important;pointer-events:none!important
+}
+html[data-af-battle-ui="1.3"] .party .unit{
+  position:relative!important;pointer-events:auto!important;width:248px!important;min-height:86px!important;
+  padding:9px 56px 9px 72px!important;border:1px solid var(--af-ui-line)!important;
+  background:linear-gradient(115deg,rgba(2,14,21,.96),rgba(6,18,29,.88))!important;color:#eefcff!important;
+  text-align:left!important;cursor:pointer!important;box-shadow:0 10px 28px rgba(0,0,0,.42)!important;overflow:visible!important
+}
+html[data-af-battle-ui="1.3"] .party .unit.active{border-color:#8df8ff!important;box-shadow:0 0 0 1px rgba(141,248,255,.35),0 0 26px rgba(79,220,236,.3)!important}
+html[data-af-battle-ui="1.3"] .party .unit>img.af-unit-portrait,
+html[data-af-battle-ui="1.3"] .party .unit>img:first-child{
+  position:absolute!important;left:4px!important;bottom:0!important;top:auto!important;width:64px!important;height:80px!important;
+  object-fit:cover!important;object-position:50% 20%!important;filter:drop-shadow(0 0 8px rgba(100,226,239,.25))!important
+}
+html[data-af-battle-ui="1.3"] .party .unit>small{display:block!important;color:#8dd5dc!important;font:700 9px/1 RelayDisplay,ui-monospace,monospace!important;letter-spacing:.1em!important}
+html[data-af-battle-ui="1.3"] .party .unit>strong{display:block!important;margin-top:4px!important;font:900 16px/1 CombatKR,SignalKR,sans-serif!important}
+html[data-af-battle-ui="1.3"] .selected-note{position:absolute!important;right:59px!important;top:10px!important;color:#fff0a9!important;font:700 8px/1 RelayDisplay!important;letter-spacing:.1em!important}
+html[data-af-battle-ui="1.3"] .bars{margin-top:7px!important}
+html[data-af-battle-ui="1.3"] .bar{position:relative!important;height:6px!important;margin-top:4px!important;background:#11272e!important;overflow:hidden!important}
+html[data-af-battle-ui="1.3"] .bar i{display:block!important;height:100%!important;width:var(--v,100%)!important;background:linear-gradient(90deg,#38ba89,#78edbd)!important;transition:width .16s!important}
+html[data-af-battle-ui="1.3"] .bar.shield i{background:linear-gradient(90deg,#42bfe9,#8eeeff)!important}
+html[data-af-battle-ui="1.3"] .ammo{
+  --cols:18;position:relative!important;display:grid!important;grid-template-columns:repeat(var(--cols),6px)!important;
+  justify-content:start!important;align-items:center!important;gap:2px!important;min-height:15px!important;margin-top:6px!important;padding-right:18px!important
+}
+html[data-af-battle-ui="1.3"] .ammo i{display:block!important;width:6px!important;height:13px!important;clip-path:polygon(35% 0,65% 0,100% 24%,100% 100%,0 100%,0 24%)!important;background:linear-gradient(#fff5c8 0 28%,#ffc85f 29% 100%)!important;filter:drop-shadow(0 0 3px #ffb541)!important}
+html[data-af-battle-ui="1.3"] .ammo i.empty{opacity:.13!important;filter:none!important;background:#6c7d82!important}
+html[data-af-battle-ui="1.3"] .ammo.reloading:after{content:"";position:absolute;right:0;top:1px;width:11px;height:11px;border:2px solid #47646c;border-top-color:#89f7ff;border-radius:50%;animation:afReloadSpin .55s linear infinite}
+html[data-af-battle-ui="1.3"] .party .ult,
+html[data-af-battle-ui="1.3"] .party .unit-burst{
+  position:absolute!important;right:7px!important;top:16px!important;left:auto!important;width:43px!important;height:43px!important;
+  border:2px solid rgba(210,154,255,.45)!important;border-radius:50%!important;
+  background:conic-gradient(#df9dff calc(var(--u,var(--burst,0))*1%),#29223a 0)!important;color:#f4ddff!important;
+  transform:none!important;padding:0!important;cursor:pointer!important;overflow:hidden!important
+}
+html[data-af-battle-ui="1.3"] .party .ult:before,
+html[data-af-battle-ui="1.3"] .party .unit-burst:before{content:"";position:absolute;inset:5px;border-radius:50%;background:#0b0b17}
+html[data-af-battle-ui="1.3"] .party .ult>span,
+html[data-af-battle-ui="1.3"] .party .unit-burst em{position:relative!important;color:#f4ddff!important;font:700 9px/43px RelayDisplay!important;font-style:normal!important}
+html[data-af-battle-ui="1.3"] .party .unit-burst .key,
+html[data-af-battle-ui="1.3"] .party .unit-burst img,
+html[data-af-battle-ui="1.3"] .party .legacy-ult .key,
+html[data-af-battle-ui="1.3"] .party .legacy-ult img{display:none!important}
+html[data-af-battle-ui="1.3"] .party .legacy-ult .burst-ring{position:absolute!important;inset:0!important;display:grid!important;place-items:center!important;background:transparent!important;border:0!important;box-shadow:none!important}
+html[data-af-battle-ui="1.3"] .party .legacy-ult .burst-ring:before{display:none!important}
+html[data-af-battle-ui="1.3"] .party .legacy-ult em{line-height:43px!important}
+html[data-af-battle-ui="1.3"] .party .ult.ready,
+html[data-af-battle-ui="1.3"] .party .unit-burst.ready{border-color:#fff!important;box-shadow:0 0 20px #d992ff!important;animation:afReady .8s infinite alternate!important}
+html[data-af-battle-ui="1.3"] .af-legacy-hidden{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;opacity:0!important;pointer-events:none!important}
+html[data-af-battle-ui="1.3"] .activation-notice,
+html[data-af-battle-ui="1.3"] .toast{
+  position:absolute!important;z-index:24!important;right:2.5%!important;left:auto!important;top:auto!important;bottom:18%!important;
+  max-width:300px!important;min-width:0!important;padding:7px 10px!important;border:0!important;border-right:3px solid var(--af-ui-cyan)!important;
+  background:linear-gradient(270deg,rgba(2,14,22,.72),transparent)!important;box-shadow:none!important;backdrop-filter:none!important;
+  pointer-events:none!important;font-size:13px!important;text-align:right!important;text-shadow:0 2px 5px #000!important
+}
+html[data-af-battle-ui="1.3"] .activation-notice small,
+html[data-af-battle-ui="1.3"] .activation-notice b,
+html[data-af-battle-ui="1.3"] .activation-notice span{display:inline!important;margin:0 0 0 7px!important;font-size:12px!important}
+html[data-af-battle-ui="1.3"] .overlay{z-index:40!important;background:rgba(0,7,13,.89)!important;padding:22px!important}
+html[data-af-battle-ui="1.3"] .overlay .panel{width:min(860px,92vw)!important;padding:26px 30px 28px!important;border:0!important;border-top:1px solid rgba(118,236,243,.65)!important;border-bottom:1px solid rgba(210,154,255,.5)!important;border-radius:0!important;background:var(--af-ui-panel)!important;text-align:center!important;box-shadow:none!important}
+html[data-af-battle-ui="1.3"] .overlay .panel h1{margin:9px 0!important;font:900 clamp(36px,6vw,68px)/1 CombatKR,SignalKR,sans-serif!important;letter-spacing:-.07em!important}
+html[data-af-battle-ui="1.3"] .overlay .panel p{margin:12px auto!important;color:#dcebed!important;font-size:17px!important;line-height:1.65!important;max-width:690px!important;word-break:keep-all!important}
+html[data-af-battle-ui="1.3"] .overlay .primary,
+html[data-af-battle-ui="1.3"] .overlay .start{margin-top:4px!important;padding:14px 28px!important;border:1px solid var(--af-ui-cyan)!important;border-radius:0!important;background:#06222a!important;color:#fff!important;font:900 17px CombatKR,SignalKR,sans-serif!important;cursor:pointer!important}
+html[data-af-stage]:not([data-af-stage="P01"]) .burst-tutorial{display:none!important}
+@keyframes afReloadSpin{to{transform:rotate(360deg)}}
+@keyframes afReady{to{transform:scale(1.08);filter:brightness(1.2)}}
+
+/* V1.7 baked standing-art ultimate cut-in. Each character is painted into a
+   complete effect illustration; runtime stacking of a separate character is forbidden. */
+html[data-af-battle-ui="1.3"] .af-burst-cutin{position:absolute;z-index:58;inset:0;overflow:hidden;visibility:hidden;opacity:0;pointer-events:none;background:#020713;isolation:isolate}
+html[data-af-battle-ui="1.3"] .af-burst-cutin.loading{visibility:hidden!important;opacity:0!important}
+html[data-af-battle-ui="1.3"] .af-burst-cutin.show{visibility:visible;animation:afBurstScene 1.55s cubic-bezier(.18,.76,.2,1) both}
+html[data-af-battle-ui="1.3"] .af-burst-composite{position:absolute;z-index:0;inset:-3%;width:106%;height:106%;object-fit:cover;object-position:50% 50%;filter:saturate(1.08) contrast(1.06);animation:afBurstBg 1.55s ease-out both}
+html[data-af-battle-ui="1.3"] .af-burst-grid{position:absolute;z-index:1;inset:0;background:repeating-linear-gradient(0deg,rgba(179,234,255,.1) 0 1px,transparent 1px 5px),linear-gradient(90deg,rgba(0,3,11,.35),transparent 58%);mix-blend-mode:screen}
+html[data-af-battle-ui="1.3"] .af-burst-ring{position:absolute;z-index:3;right:7%;top:50%;width:42vw;height:42vw;border:2px solid rgba(150,241,255,.7);border-radius:50%;box-shadow:0 0 22px rgba(111,225,255,.58),inset 0 0 24px rgba(151,122,255,.28);transform:translateY(-50%);mix-blend-mode:screen}
+html[data-af-battle-ui="1.3"] .af-burst-ring:before,html[data-af-battle-ui="1.3"] .af-burst-ring:after{content:"";position:absolute;border-radius:50%;border:1px dashed currentColor;inset:10%}
+html[data-af-battle-ui="1.3"] .af-burst-ring:after{inset:27%;border-style:solid;box-shadow:0 0 30px currentColor}
+html[data-af-battle-ui="1.3"] .af-burst-ring-a{animation:afBurstRingA 1.55s ease-out both}.af-burst-ring-b{opacity:.56;animation:afBurstRingB 1.55s ease-out both}
+html[data-af-battle-ui="1.3"] .af-burst-streaks{position:absolute;z-index:4;right:-6%;top:17%;width:68%;height:67%;background:repeating-linear-gradient(164deg,transparent 0 28px,rgba(205,247,255,.86) 29px 31px,transparent 32px 63px);filter:blur(.2px) drop-shadow(0 0 8px #62dfff);clip-path:polygon(8% 0,100% 10%,88% 100%,0 82%);animation:afBurstStreaks 1.55s ease-out both;mix-blend-mode:screen}
+html[data-af-battle-ui="1.3"] .af-burst-flare{position:absolute;z-index:5;right:20%;top:43%;width:24vw;height:24vw;border-radius:50%;background:radial-gradient(circle,#fff 0 2%,rgba(135,238,255,.9) 3%,rgba(135,108,255,.38) 22%,transparent 68%);filter:blur(1px);animation:afBurstFlare 1.55s ease both;mix-blend-mode:screen}
+html[data-af-battle-ui="1.3"] .af-burst-scan{position:absolute;z-index:8;top:0;bottom:0;width:9px;background:linear-gradient(#fff,#9ff8ff,#d8a7ff,#fff);box-shadow:0 0 34px #a2f6ff;animation:afBurstScan 1.55s cubic-bezier(.17,.76,.2,1) both}
+html[data-af-battle-ui="1.3"] .af-burst-copy{position:absolute;z-index:9;right:5.5%;bottom:12%;max-width:48%;text-align:right;text-shadow:0 3px 15px #000}
+html[data-af-battle-ui="1.3"] .af-burst-copy small{display:block;color:#bff7ff;font:800 13px/1 RelayDisplay,ui-monospace,sans-serif;letter-spacing:.22em}
+html[data-af-battle-ui="1.3"] .af-burst-copy b{display:block;margin-top:9px;color:#fff;font:900 clamp(38px,5vw,72px)/.95 CombatKR,SignalKR,sans-serif;letter-spacing:-.055em}
+html[data-af-battle-ui="1.3"] .af-burst-copy span{display:block;margin-top:11px;color:#d5f8ff;font:700 14px/1.25 RelayDisplay,ui-monospace,sans-serif;letter-spacing:.12em}
+html[data-af-battle-ui="1.3"] .af-burst-cutin[data-character="haneul"] .af-burst-ring{color:#62ffd2;border-color:rgba(98,255,210,.75);box-shadow:0 0 24px rgba(38,255,190,.58),inset 0 0 25px rgba(93,255,219,.27)}
+html[data-af-battle-ui="1.3"] .af-burst-cutin[data-character="haneul"] .af-burst-streaks{filter:drop-shadow(0 0 9px #45ffc8);background:repeating-linear-gradient(164deg,transparent 0 25px,rgba(144,255,217,.9) 26px 29px,transparent 30px 58px)}
+@keyframes afBurstScene{0%{opacity:0}7%,84%{opacity:1}100%{opacity:0}}
+@keyframes afBurstBg{0%{transform:scale(1.12);filter:brightness(.55) saturate(1.2)}26%,86%{transform:scale(1);filter:brightness(1.05) saturate(1.08)}100%{transform:scale(1.035);filter:brightness(.82)}}
+@keyframes afBurstRingA{0%{opacity:0;transform:translateY(-50%) scale(.18) rotate(-70deg)}28%,82%{opacity:.9;transform:translateY(-50%) scale(1) rotate(0)}100%{opacity:0;transform:translateY(-50%) scale(1.26) rotate(14deg)}}
+@keyframes afBurstRingB{0%{transform:translateY(-50%) scale(.28) rotate(100deg)}35%,90%{transform:translateY(-50%) scale(.78) rotate(0)}100%{opacity:0;transform:translateY(-50%) scale(1.12) rotate(-20deg)}}
+@keyframes afBurstStreaks{0%{opacity:0;transform:translateX(28%) scaleX(.4)}24%,79%{opacity:.78;transform:none}100%{opacity:0;transform:translateX(-8%) scaleX(1.08)}}
+@keyframes afBurstFlare{0%,10%{opacity:0;transform:scale(.08)}36%{opacity:1;transform:scale(1)}70%{opacity:.68;transform:scale(.78)}100%{opacity:0;transform:scale(1.6)}}
+@keyframes afBurstScan{0%{left:-2%}34%,78%{left:66%}100%{left:104%}}
+@media(max-width:700px){html[data-af-battle-ui="1.3"] .af-burst-ring{right:-17%;width:66vh;height:66vh}html[data-af-battle-ui="1.3"] .af-burst-copy{right:4%;bottom:8%;max-width:59%}html[data-af-battle-ui="1.3"] .af-burst-copy small{font-size:9px}html[data-af-battle-ui="1.3"] .af-burst-copy b{font-size:31px}html[data-af-battle-ui="1.3"] .af-burst-copy span{font-size:9px}}
+@media(max-width:700px){
+  html[data-af-battle-ui="1.3"] .topbar,html[data-af-battle-ui="1.3"] .battle-topbar{grid-template-columns:112px 1fr 112px!important;top:1%!important;left:1%!important;right:1%!important;gap:4px!important}
+  html[data-af-battle-ui="1.3"] .toggle,html[data-af-battle-ui="1.3"] .fire-toggle,html[data-af-battle-ui="1.3"] .tactical-auto{min-height:48px!important;padding:6px!important;font-size:12px!important}
+  html[data-af-battle-ui="1.3"] .mission small,html[data-af-battle-ui="1.3"] .operation-title small{font-size:8px!important}
+  html[data-af-battle-ui="1.3"] .mission b,html[data-af-battle-ui="1.3"] .operation-title b{font-size:20px!important}
+  html[data-af-battle-ui="1.3"] .mission span{display:none!important}
+  html[data-af-battle-ui="1.3"] .feed,html[data-af-battle-ui="1.3"] .command-feed{left:1.5%!important;top:9%!important;width:46%!important;padding:5px 7px!important}
+  html[data-af-battle-ui="1.3"] .feed b,html[data-af-battle-ui="1.3"] .command-feed span{font-size:10px!important}
+  html[data-af-battle-ui="1.3"] .party{left:0!important;right:0!important;bottom:auto!important;top:52%!important;transform:translateY(-50%)!important;justify-content:space-between!important;padding:0 4px!important}
+  html[data-af-battle-ui="1.3"] .party .unit{width:98px!important;min-height:128px!important;padding:62px 5px 7px!important;text-align:center!important;background:rgba(2,13,21,.86)!important}
+  html[data-af-battle-ui="1.3"] .party .unit>img.af-unit-portrait,html[data-af-battle-ui="1.3"] .party .unit>img:first-child{left:16px!important;top:4px!important;bottom:auto!important;width:64px!important;height:56px!important}
+  html[data-af-battle-ui="1.3"] .party .unit>small{font-size:7px!important}html[data-af-battle-ui="1.3"] .party .unit>strong{font-size:11px!important}
+  html[data-af-battle-ui="1.3"] .selected-note{display:none!important}
+  html[data-af-battle-ui="1.3"] .ammo{--cols:9!important;grid-template-columns:repeat(9,5px)!important;gap:2px!important;justify-content:center!important;padding-right:0!important}
+  html[data-af-battle-ui="1.3"] .ammo i{width:5px!important;height:11px!important}
+  html[data-af-battle-ui="1.3"] .party .ult,html[data-af-battle-ui="1.3"] .party .unit-burst{position:relative!important;right:auto!important;top:auto!important;width:36px!important;height:36px!important;margin:6px auto 0!important}
+  html[data-af-battle-ui="1.3"] .party .unit-burst em{line-height:36px!important}
+  html[data-af-battle-ui="1.3"] .party.legacy-party{justify-content:flex-end!important}
+  html[data-af-battle-ui="1.3"] .activation-notice,html[data-af-battle-ui="1.3"] .toast{right:4%!important;bottom:10%!important;font-size:11px!important}
+  html[data-af-battle-ui="1.3"] .cutscene-toggle{right:2%!important;top:8.2%!important;min-height:32px!important;padding:6px 10px!important;font-size:9px!important}
+  html[data-af-battle-ui="1.3"] .overlay .panel{padding:18px 14px!important}html[data-af-battle-ui="1.3"] .overlay .panel p{font-size:14px!important}
+}
+
+/* V1.4 mobile safety contract -------------------------------------------------
+   A cut-in is an iframe-viewport cinematic, never a wide desktop strip scaled
+   into portrait. Result/start overlays always become the top interaction owner. */
+html[data-af-battle-ui="1.3"] .overlay:not(.hidden){
+  display:grid!important;visibility:visible!important;pointer-events:auto!important;
+  overflow:auto!important;overscroll-behavior:contain!important;touch-action:pan-y!important
+}
+html[data-af-battle-ui="1.3"] .overlay.hidden{
+  display:none!important;visibility:hidden!important;pointer-events:none!important
+}
+html[data-af-battle-ui="1.3"] .overlay .panel{
+  position:relative!important;z-index:2!important;max-height:calc(100vh - 20px)!important;
+  max-height:calc(100dvh - 20px)!important;overflow:auto!important;overscroll-behavior:contain!important
+}
+html[data-af-battle-ui="1.3"] .overlay button,
+html[data-af-battle-ui="1.3"] .overlay .primary,
+html[data-af-battle-ui="1.3"] .overlay .start{
+  position:relative!important;z-index:4!important;min-height:52px!important;
+  pointer-events:auto!important;touch-action:manipulation!important
+}
+
+@media (orientation:portrait) and (max-width:700px){
+  html[data-af-battle-ui="1.3"] .af-burst-cutin{
+    position:fixed!important;inset:0!important;width:100%!important;height:100%!important
+  }
+  html[data-af-battle-ui="1.3"] .af-burst-composite{inset:0!important;width:100%!important;height:100%!important;object-position:20% 50%!important}
+  html[data-af-battle-ui="1.3"] .af-burst-ring{
+    left:10%!important;right:auto!important;top:39%!important;width:80vw!important;height:80vw!important
+  }
+  html[data-af-battle-ui="1.3"] .af-burst-streaks{left:-8%!important;right:auto!important;top:13%!important;width:116%!important;height:70%!important}
+  html[data-af-battle-ui="1.3"] .af-burst-flare{left:29%!important;right:auto!important;top:35%!important;width:42vw!important;height:42vw!important}
+  html[data-af-battle-ui="1.3"] .af-burst-copy{
+    left:4%!important;right:4%!important;bottom:3%!important;max-width:none!important;padding:13px 12px 15px!important;
+    text-align:center!important;background:linear-gradient(90deg,transparent,rgba(1,10,20,.9) 16% 84%,transparent)!important
+  }
+  html[data-af-battle-ui="1.3"] .af-burst-copy small{font-size:11px!important}
+  html[data-af-battle-ui="1.3"] .af-burst-copy b{font-size:clamp(28px,9vw,42px)!important;line-height:1.02!important}
+  html[data-af-battle-ui="1.3"] .af-burst-copy span{margin-top:7px!important;font-size:10px!important}
+}
+
+@media (orientation:landscape) and (max-height:520px){
+  html[data-af-battle-ui="1.3"] .overlay{position:fixed!important;inset:0!important;padding:8px!important;place-items:center!important}
+  html[data-af-battle-ui="1.3"] .overlay .panel{width:min(900px,96vw)!important;max-height:calc(100dvh - 12px)!important;padding:10px 18px 12px!important}
+  html[data-af-battle-ui="1.3"] .overlay .panel h1{margin:3px 0!important;font-size:clamp(27px,8vh,42px)!important}
+  html[data-af-battle-ui="1.3"] .overlay .panel p{margin:5px auto!important;font-size:12px!important;line-height:1.35!important}
+  html[data-af-battle-ui="1.3"] .overlay .deployment{margin:5px auto!important;max-height:72px!important;overflow:hidden!important}
+  html[data-af-battle-ui="1.3"] .overlay .hint{display:none!important}
+  html[data-af-battle-ui="1.3"] .overlay button,
+  html[data-af-battle-ui="1.3"] .overlay .primary,
+  html[data-af-battle-ui="1.3"] .overlay .start{min-height:46px!important;margin:5px auto 0!important;padding:9px 24px!important}
+}

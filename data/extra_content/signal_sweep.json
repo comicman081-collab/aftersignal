@@ -1,0 +1,23 @@
+{
+  "id": "signalSweep",
+  "displayName": "신호 소탕전",
+  "resetType": "DAILY",
+  "waveCount": 3,
+  "backgrounds": ["P-01", "P-02", "P-04", "P-07"],
+  "enemyPools": [
+    ["renewal_scavenger", "renewal_mite", "renewal_aerial"],
+    ["renewal_plate", "renewal_scavenger", "renewal_aerial_guard"],
+    ["renewal_aerial", "renewal_aerial_guard", "renewal_mite"]
+  ],
+  "midbosses": ["renewal_signal_warden", "renewal_mira_voice_echo"],
+  "playerUpgrades": [
+    "projectile_damage_20", "core_damage_30", "reload_speed_25", "magazine_2",
+    "shield_recovery_20", "ultimate_charge_35", "critical_rate_10",
+    "incoming_damage_minus_15", "impact_stagger_15", "heavy_multiplier_15"
+  ],
+  "enemyModifiers": [
+    "enemy_hp_20", "enemy_move_15", "projectile_speed_20", "shielded_composition",
+    "aerial_heavy", "ground_heavy", "elite_spawn", "core_exposure_minus_20",
+    "enemy_skill_cooldown_minus_15", "player_ultimate_charge_minus_15"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "timezone": "Asia/Seoul",
+  "rewardLedgerLimit": 512,
+  "signalSweep": {
+    "dailyBase": { "credits": [800, 1200], "battleData": [500, 800], "weaponModules": [2, 4] },
+    "rewardChoices": [
+      { "id": "battle_data", "battleData": 900 },
+      { "id": "modules", "weaponModules": 4 },
+      { "id": "hybrid", "credits": 700, "skillManual": 1 }
+    ],
+    "expertFirstClear": { "skillManual": 1 }
+  },
+  "contracts": {
+    "dailyMission": { "credits": 180, "battleData": 120 },
+    "dailyMilestone2": { "weaponModules": 2 },
+    "dailyMilestone3": { "skillManual": 1 },
+    "weeklyMission": { "credits": 600, "battleData": 400, "weaponModules": 1 },
+    "weeklyComplete": { "coreSignal": 2, "skillManual": 3 }
+  },
+  "threatInterception": {
+    "dailyAttempts": 3,
+    "tiers": {
+      "C": { "credits": 300, "weaponModules": 2 },
+      "B": { "credits": 400, "weaponModules": 3 },
+      "A": { "credits": 500, "weaponModules": 4, "skillManual": 1 },
+      "S": { "credits": 600, "weaponModules": 5, "skillManual": 1 }
+    },
+    "weeklyMilestone": { "coreSignal": 2 },
+    "weeklyHighestFirstClear": { "weaponBoxes": 1 }
+  },
+  "relaySupply": { "creditsPerHour": 300, "battleDataPerHour": 120, "capHours": 12 },
+  "noSignalZone": {
+    "normalNode": { "credits": 260, "battleData": 180 },
+    "eliteNode": { "weaponModules": 2 },
+    "riskNode": { "weaponModules": 3 },
+    "sectorComplete": { "coreSignal": 1 }
+  },
+  "relayTower": {
+    "normalCreditsBase": 250,
+    "normalCreditsPerFloor": 12,
+    "normalBattleDataBase": 100,
+    "normalBattleDataPerFloor": 6,
+    "milestone5": { "weaponModules": 3 },
+    "milestone10": { "coreSignal": 1 },
+    "bossMilestone": { "skillManual": 1, "weaponBoxes": 1 }
+  },
+  "tacticalSimulation": {
+    "tiers": {
+      "BRONZE": { "minimumScore": 2500, "credits": 500, "battleData": 300 },
+      "SILVER": { "minimumScore": 5000, "credits": 800, "battleData": 500, "weaponModules": 2 },
+      "GOLD": { "minimumScore": 8000, "credits": 1200, "battleData": 700, "weaponModules": 3, "skillManual": 1, "coreSignal": 1 }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "version": "0.66",
+  "layers": {
+    "GROUND": { "render_order": 10, "y_min": 300, "y_max": 430 },
+    "MID": { "render_order": 20, "y_min": 200, "y_max": 299 },
+    "AIR": { "render_order": 30, "y_min": 90, "y_max": 199 }
+  },
+  "transition": {
+    "mid_to_air_y": 194,
+    "air_to_mid_y": 205,
+    "duration": 0.18,
+    "rule": "hysteresis_with_transition_state"
+  },
+  "pages": {
+    "p01": {
+      "null": { "spawn_layer": "GROUND", "default_layer": "GROUND", "allowed_layers": ["GROUND"], "movement_range": { "x": 74, "y": 34, "base_y": [300, 430], "elevation_z": [0, 90] }, "render_order": 10, "jump": true },
+      "drone": { "spawn_layer": "AIR", "default_layer": "MID", "allowed_layers": ["MID", "AIR"], "movement_range": { "x": 82, "y": 48, "base_y": [90, 299], "elevation_z": [0, 0] }, "render_order": 20 }
+    },
+    "p02": {
+      "scout": { "spawn_layer": "GROUND", "default_layer": "GROUND", "allowed_layers": ["GROUND"], "movement_range": { "x": 74, "y": 32, "base_y": [300, 430], "elevation_z": [0, 90] }, "render_order": 10, "jump": true },
+      "jammer": { "spawn_layer": "GROUND", "default_layer": "GROUND", "allowed_layers": ["GROUND"], "movement_range": { "x": 68, "y": 42, "base_y": [300, 430], "elevation_z": [0, 90] }, "render_order": 10, "jump": true },
+      "mite": { "spawn_layer": "AIR", "default_layer": "AIR", "allowed_layers": ["MID", "AIR"], "movement_range": { "x": 106, "y": 62, "base_y": [90, 299], "elevation_z": [0, 0] }, "render_order": 30 },
+      "plate": { "spawn_layer": "MID", "default_layer": "MID", "allowed_layers": ["MID", "AIR"], "movement_range": { "x": 86, "y": 48, "base_y": [90, 299], "elevation_z": [0, 0] }, "render_order": 20 }
+    },
+    "p04": {
+      "echo": { "spawn_layer": "GROUND", "default_layer": "GROUND", "allowed_layers": ["GROUND"], "movement_range": { "x": 105, "y": 48, "base_y": [300, 430], "elevation_z": [0, 90] }, "render_order": 10, "jump": true },
+      "mimic": { "spawn_layer": "AIR", "default_layer": "AIR", "allowed_layers": ["MID", "AIR"], "movement_range": { "x": 82, "y": 64, "base_y": [90, 299], "elevation_z": [0, 0] }, "render_order": 30 }
+    },
+    "p06": {
+      "A": { "spawn_layer": "AIR", "default_layer": "AIR", "allowed_layers": ["MID", "AIR"], "movement_range": { "x": 100, "y": 48, "base_y": [90, 299], "elevation_z": [0, 0] }, "render_order": 30 },
+      "B": { "spawn_layer": "GROUND", "default_layer": "GROUND", "allowed_layers": ["GROUND"], "movement_range": { "x": 100, "y": 48, "base_y": [300, 430], "elevation_z": [0, 90] }, "render_order": 10, "jump": true }
+    },
+    "p07": {
+      "A": { "spawn_layer": "AIR", "default_layer": "AIR", "allowed_layers": ["MID", "AIR"], "movement_range": { "x": 160, "y": 90, "base_y": [90, 299], "elevation_z": [0, 0] }, "render_order": 30 },
+      "B": { "spawn_layer": "GROUND", "default_layer": "GROUND", "allowed_layers": ["GROUND"], "movement_range": { "x": 160, "y": 48, "base_y": [300, 430], "elevation_z": [0, 90] }, "render_order": 10, "jump": true },
+      "warden": { "spawn_layer": "AIR", "default_layer": "AIR", "allowed_layers": ["MID", "AIR"], "movement_range": { "x": 370, "y": 95, "base_y": [90, 299], "elevation_z": [0, 0] }, "render_order": 30, "special_boss": true }
+    },
+    "p08": {
+      "A": { "spawn_layer": "AIR", "default_layer": "AIR", "allowed_layers": ["MID", "AIR"], "movement_range": { "x": 150, "y": 70, "base_y": [90, 299], "elevation_z": [0, 0] }, "render_order": 30 },
+      "B": { "spawn_layer": "AIR", "default_layer": "AIR", "allowed_layers": ["MID", "AIR"], "movement_range": { "x": 150, "y": 70, "base_y": [90, 299], "elevation_z": [0, 0] }, "render_order": 30 }
+    }
+  }
+}

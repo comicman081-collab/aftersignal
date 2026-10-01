@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "created": "2026-09-25",
+  "generator": "Codex built-in ImageGen image edit",
+  "purpose": "Darken the user-selected sandbag barricade to match the combat environment while keeping the existing silhouette, and make a matching damaged state.",
+  "license_basis": "MANIFEST.json and LICENSE.txt: kArchive/dogfooter permits commercial use and modification with attribution; AI training is prohibited.",
+  "source_reference": "combat_reboot_v1/game_bake_v1/source_refs/user-sandbag-reference-20260925.png",
+  "source_reference_sha256": "074d9151087fd029c83389683130ca79f47d1fac91f868978051d30cab0ab967",
+  "edits": [
+    {
+      "source_sprite": "sandbag-barricade.webp",
+      "runtime_sprite": "sandbag-barricade-dark-v2.webp",
+      "sha256": "25233c5bbca969f36ed24efb0e6bc9e48e0f64433b32a46fb8e86af8c163e628",
+      "prompt_summary": "Preserve the exact eight-sandbag barricade silhouette and transparent background; recolor fabric to darker charcoal olive and cold graphite, with subtle battlefield dirt and wear, no added props."
+    },
+    {
+      "source_sprite": "sandbag-barricade-destroyed.webp",
+      "runtime_sprite": "sandbag-barricade-destroyed-dark-v2.webp",
+      "sha256": "b8fc4e37aec3da144d5a943d23234b0e61ae5da15bcc631a85a35c7c9ba62b41",
+      "prompt_summary": "Preserve the existing damaged sandbag barricade silhouette and transparent background; use the same darker charcoal olive and cold graphite palette with battlefield dirt and wear."
+    }
+  ]
+}

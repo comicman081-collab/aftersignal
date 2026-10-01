@@ -1,0 +1,9 @@
+{
+  "id": "relayTower",
+  "displayName": "릴레이 타워",
+  "resetType": "NONE",
+  "initialFloors": 20,
+  "foundationMaxFloor": null,
+  "bossFloors": [5, 10, 15, 20],
+  "enemyRotation": ["renewal_scavenger", "renewal_mite", "renewal_plate", "renewal_aerial", "renewal_aerial_guard"]
+}

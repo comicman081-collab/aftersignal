@@ -1,0 +1,79 @@
+/* AFTER SIGNAL story controls contract V1.1 — P-00 active: HIDE [H] AUTO [A] LOG [L] SKIP [S] */
+.af-story-controls{
+  position:absolute!important;z-index:40!important;top:max(16px,env(safe-area-inset-top))!important;
+  right:max(22px,env(safe-area-inset-right))!important;left:auto!important;bottom:auto!important;
+  display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:15px!important;
+  width:auto!important;padding:5px 8px!important;border:0!important;border-radius:0!important;
+  background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;
+}
+.af-story-controls .af-story-control{
+  appearance:none!important;display:inline-flex!important;align-items:center!important;gap:7px!important;
+  min-width:0!important;min-height:0!important;margin:0!important;padding:3px 0!important;border:0!important;
+  border-radius:0!important;background:transparent!important;box-shadow:none!important;color:#f5f7fb!important;
+  font:900 15px/1.05 RelayDisplay,CombatKR,"Noto Sans KR",system-ui,sans-serif!important;
+  letter-spacing:-.025em!important;text-shadow:0 2px 5px #000,0 0 10px rgba(0,0,0,.78)!important;cursor:pointer!important;
+}
+.af-story-controls .af-story-control kbd{
+  display:inline-grid!important;place-items:center!important;min-width:23px!important;height:22px!important;
+  padding:0 5px!important;border:1px solid rgba(235,241,249,.72)!important;border-radius:6px!important;
+  background:rgba(4,9,16,.54)!important;color:#f5f7fb!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)!important;
+  font:800 11px/1 RelayDisplay,ui-monospace,monospace!important;text-shadow:none!important;
+}
+.af-story-controls .af-story-control.active{color:#83f5f8!important}
+.af-story-controls .af-story-control:hover,.af-story-controls .af-story-control:focus-visible{color:#ffd38a!important;outline:none!important}
+.af-story-controls .af-story-control:focus-visible kbd{border-color:#ffd38a!important;box-shadow:0 0 0 2px rgba(255,211,138,.2)!important}
+.af-story-controls [data-af-story-action="sound"]{display:none!important}
+/* The actual log panel is never normalized as a button. Keep it above the
+   P-00 opening veil so LOG remains usable on the entry scene. */
+.log.show,[role="dialog"].log.show{z-index:45!important}
+@media(max-width:700px){
+  .af-story-controls{top:max(10px,env(safe-area-inset-top))!important;right:max(9px,env(safe-area-inset-right))!important;transform:none!important;gap:9px!important;padding:3px!important}
+  .af-story-controls .af-story-control{gap:4px!important;font-size:12px!important}
+  .af-story-controls .af-story-control kbd{min-width:19px!important;height:18px!important;padding:0 3px!important;border-radius:5px!important;font-size:9px!important}
+}
+@media(max-width:390px){.af-story-controls{gap:7px!important}.af-story-controls .af-story-control{font-size:11px!important}}
+
+/* Story character placement contract V1. The same standing asset uses one
+   baseline/slot from P-00 onward; combat sprites never participate here. */
+:root{--af-story-standing-height:min(88vh,820px);--af-story-standing-bottom:-7%;--af-story-right-slot:8%;--af-story-left-slot:8%}
+.operator[alt="미라 보스"],#mira.actor{
+  position:absolute!important;z-index:4!important;left:auto!important;right:var(--af-story-right-slot)!important;
+  bottom:var(--af-story-standing-bottom)!important;width:auto!important;height:var(--af-story-standing-height)!important;
+  max-width:48vw!important;object-fit:contain!important;object-position:center bottom!important;
+}
+#mira.actor{transform:translateX(24px)!important}
+#mira.actor.show{transform:none!important}
+#haneul.actor{left:var(--af-story-left-slot)!important;right:auto!important;bottom:var(--af-story-standing-bottom)!important;height:var(--af-story-standing-height)!important}
+#haneul.actor.show{transform:none!important}
+@media(max-aspect-ratio:4/5){
+  :root{--af-story-standing-height:min(70svh,760px);--af-story-standing-bottom:20%;--af-story-right-slot:-18vw;--af-story-left-slot:-18vw}
+  .operator[alt="미라 보스"],#mira.actor{right:50%!important;max-width:86vw!important;transform:translateX(50%) translateX(24px)!important}
+  .scene[data-speaker="mira"] .operator[alt="미라 보스"],#mira.actor.show{transform:translateX(50%)!important}
+  #haneul.actor{left:50%!important;max-width:86vw!important;transform:translateX(-50%) translateX(-24px)!important}
+  #haneul.actor.show{transform:translateX(-50%)!important}
+}
+/* Chapter-to-combat actions use the same Korean display face as the story UI. */
+.end-action{font-family:CombatKR,SignalKR,"Noto Sans KR",system-ui,sans-serif!important;font-weight:800!important;letter-spacing:.04em!important}
+
+/* Narration lines V1 (2026-09-26). A story page sets data-af-narration on its dialogue box when the line is
+   narration (scene speaker "서술"). The name plate and its bar are dropped; the English scene tag stays as a
+   quiet caption (cyan, like the chapter-card caption) and the prose is a little softer than spoken lines.
+   Only story pages set the attribute, so combat pages that also load this file are unaffected. */
+.dialogue[data-af-narration] .speaker strong,.textbox[data-af-narration] .speaker{display:none!important}
+/* keep the caption row as tall as a name row so the prose does not jump between spoken and narrated lines */
+.dialogue[data-af-narration]>.speaker{min-height:20px;align-items:center!important}
+.dialogue[data-af-narration] .speaker small,.textbox[data-af-narration] .label{
+  display:inline-flex!important;align-items:center!important;margin:0!important;color:#9cc4cc!important;
+  font:700 11px/1 RelayDisplay,ui-monospace,monospace!important;letter-spacing:.22em!important;
+}
+.dialogue[data-af-narration] .speaker small:before,.textbox[data-af-narration] .label:before{
+  content:"";flex:none;width:26px;height:1px;margin-right:12px;background:currentColor;opacity:.7;
+}
+.dialogue[data-af-narration],.textbox[data-af-narration]{border-left-color:rgba(156,196,204,.4)!important}
+.dialogue[data-af-narration] .line,.textbox[data-af-narration] .dialogue{color:#d2e1e5!important}
+.history>div[data-af-narration],.log>div[data-af-narration]{color:#b6cad0}
+@media(max-width:760px){
+  .dialogue[data-af-narration]>.speaker{min-height:17px}
+  .dialogue[data-af-narration] .speaker small,.textbox[data-af-narration] .label{font-size:10px!important;letter-spacing:.18em!important}
+  .dialogue[data-af-narration] .speaker small:before,.textbox[data-af-narration] .label:before{width:18px;margin-right:9px}
+}

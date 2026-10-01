@@ -1,0 +1,145 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#02060a"><title>AFTER SIGNAL — 메인 스토리</title><style>
+/* CAMPAIGN_CH01_05_V1 story player (2026-09-27, Claude Code). Visual language follows the prologue story pages
+   (p07intro): dim background, vignette, left-bordered dialogue box, chapter cards, HIDE/AUTO/LOG/SKIP.
+   Background = the chapter's PASS four-layer strips stacked in place (pixel-exact composite). Characters =
+   roster standing art; enemies = the PASS mob/boss front art of the stage. All art is drawn unmodified. */
+@font-face{font-family:CombatKR;src:url("../assets/fa6767788359138e7825.woff2") format("woff2");font-weight:700 900;font-display:swap}@font-face{font-family:RelayDisplay;src:url("../assets/5b7e4a6f97163c263672.woff2") format("woff2");font-weight:700;font-display:swap}
+:root{--cyan:#75eff2;--violet:#d69aff}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#02060a;color:#f4ffff;font-family:CombatKR,"Noto Sans KR",sans-serif}
+.stage{position:relative;width:100%;height:100svh;overflow:hidden;user-select:none}
+.bgwrap{position:absolute;inset:0;overflow:hidden;filter:saturate(.78) brightness(.62)}.bgstrip{position:absolute;top:0;height:100%;display:flex;flex-direction:column;transition:transform 1.2s ease}.bgstrip img{display:block;width:100%;height:25%;object-fit:fill}
+.haze{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(2,6,12,.28),transparent 30%,transparent 62%,rgba(2,6,12,.34))}
+.cs-mob,.cs-boss,.cs-actor{position:absolute;display:block;max-width:none;pointer-events:none;opacity:0;transition:opacity .45s,filter .35s,transform .45s}
+.cs-mob{z-index:2;filter:brightness(.74) saturate(.86) drop-shadow(0 14px 18px rgba(0,0,0,.55))}.cs-mob.show{opacity:.96}
+.cs-boss{z-index:3;filter:brightness(.8) drop-shadow(0 0 30px rgba(170,103,255,.45)) drop-shadow(0 22px 30px rgba(0,0,0,.6));transform:scale(.96)}.cs-boss.show{opacity:1;transform:none}.cs-boss.speak{filter:brightness(.98) drop-shadow(0 0 38px rgba(210,120,255,.7)) drop-shadow(0 22px 30px rgba(0,0,0,.6))}
+.cs-actor{z-index:5;filter:drop-shadow(0 22px 32px rgba(0,0,0,.72));transform:translateY(18px)}.cs-actor.show{opacity:1;transform:none}.cs-actor.dim{filter:brightness(.46) drop-shadow(0 22px 32px rgba(0,0,0,.72))}.cs-actor.origin{filter:hue-rotate(155deg) saturate(.55) brightness(1.08) drop-shadow(0 0 22px rgba(117,239,242,.55))}.cs-actor.origin.dim{filter:hue-rotate(155deg) saturate(.45) brightness(.5)}
+.vignette{position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(circle at 50% 38%,transparent 30%,rgba(1,4,8,.62)),linear-gradient(0deg,rgba(1,4,8,.9),transparent 34%)}.grain{position:absolute;inset:0;z-index:9;opacity:.1;pointer-events:none;background-image:repeating-linear-gradient(0deg,transparent 0 3px,#9ff2ff0c 4px)}
+.top{position:absolute;z-index:20;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:max(14px,env(safe-area-inset-top)) 4.7%}.chapter{padding-left:12px;border-left:3px solid var(--cyan);font:700 13px/1.35 RelayDisplay;letter-spacing:.16em;color:#d7fbff;text-shadow:0 2px 5px #000}.chapter b{display:block;margin-top:6px;font:900 clamp(18px,1.9vw,29px)/1 CombatKR;letter-spacing:-.05em}
+.controls{display:flex;gap:14px}.ctrl{border:0;background:transparent;color:#f7ffff;padding:4px;font:700 14px/1 RelayDisplay;letter-spacing:.05em;text-shadow:0 2px 4px #000;cursor:pointer}.ctrl.active{color:var(--cyan)}
+.textbox{position:absolute;z-index:15;left:7.5%;right:7.5%;bottom:5.5%;min-height:160px;padding:20px 26px 22px;border-left:4px solid rgba(221,251,255,.9);background:linear-gradient(90deg,rgba(1,7,13,.9),rgba(2,11,18,.74) 62%,rgba(2,10,16,.24));box-shadow:0 20px 60px rgba(0,0,0,.34);backdrop-filter:blur(3px);cursor:pointer}
+.speaker{display:inline-block;color:#fff;font:900 20px/1 CombatKR;letter-spacing:-.018em}.speaker:before{content:"";display:inline-block;width:4px;height:20px;margin-right:11px;vertical-align:-3px;background:#eaf6f8;box-shadow:0 0 10px rgba(152,240,255,.8)}.textbox.boss-line .speaker:before{background:#e0a2ff;box-shadow:0 0 12px rgba(214,154,255,.9)}.textbox.comm-line .speaker:after{content:"COMM";margin-left:10px;padding:2px 6px;border:1px solid rgba(117,239,242,.55);color:#9ceaf1;font:700 10px/1 RelayDisplay;letter-spacing:.14em;vertical-align:3px}
+.label{margin-left:11px;color:#ffc775;font:700 12px/1 RelayDisplay;letter-spacing:.13em}.dialogue{margin-top:14px;max-width:1050px;color:#eef6f7;font:600 22px/1.68 CombatKR;letter-spacing:-.018em;text-shadow:0 2px 5px #000;word-break:keep-all}.next{position:absolute;right:20px;bottom:10px;color:#e9fdff;font:800 19px/1 RelayDisplay;animation:blink .8s infinite alternate}
+.chapter-card{position:absolute;z-index:24;inset:0;display:none;place-items:center;background:rgba(0,2,6,.64);text-align:center;padding:28px;cursor:pointer}.chapter-card.show{display:grid}.chapter-card>div{width:min(820px,86vw);padding:28px 34px 32px;border-top:1px solid rgba(120,234,242,.72);border-bottom:1px solid rgba(202,155,255,.58);background:rgba(2,10,18,.84)}.chapter-card small{font:700 13px/1 RelayDisplay;letter-spacing:.2em;color:#9ceaf1}.chapter-card h1{margin:10px 0;font:900 clamp(34px,4.4vw,56px)/1.05 CombatKR;letter-spacing:-.06em;word-break:keep-all}.chapter-card p{margin:13px auto 0;color:#e6eff0;font:600 19px/1.68 CombatKR;word-break:keep-all}.chapter-card .go{display:inline-block;margin-top:20px;padding:12px 26px;border:1px solid var(--cyan);background:#07313bcc;color:#fff;font:900 16px CombatKR;letter-spacing:.02em}.chapter-card.boss>div{border-top-color:rgba(214,154,255,.85)}.chapter-card.boss small{color:#e3b6ff}
+.history{position:absolute;z-index:32;right:12px;top:70px;width:min(500px,calc(100% - 24px));max-height:65vh;overflow:auto;padding:15px;background:#031019f2;border:1px solid #53717a;display:none}.history.show{display:block}.history div{padding:9px;border-bottom:1px solid #243c44;line-height:1.55}.history b{color:var(--cyan)}
+.audio-gate{position:fixed;z-index:50;inset:0;display:grid;place-items:center;background:#02070cdd}.audio-gate.off{display:none}.audio-gate button{padding:17px 25px;border:1px solid var(--cyan);background:#09222a;color:#fff;font:900 18px CombatKR}
+.hidden-ui .top,.hidden-ui .textbox{opacity:0;pointer-events:none}@keyframes blink{to{opacity:.35;transform:translateY(4px)}}
+@media(max-width:700px){.top{padding-left:4%;padding-right:4%}.chapter{font-size:10px}.chapter b{font-size:19px}.controls{gap:6px}.ctrl{font-size:11px}.textbox{left:4%;right:4%;bottom:3.2%;min-height:142px;padding:16px 18px 18px}.speaker{font-size:17px}.label{font-size:10px}.dialogue{margin-top:12px;font-size:17px;line-height:1.58}.chapter-card>div{padding:24px 20px 26px}.chapter-card h1{font-size:32px}.chapter-card p{font-size:16px;line-height:1.58}}
+</style><script src="../shared/foundation/AFTERSIGNAL_STAGE_FLOW_V1.js?build=20260816m5portrait4"></script><script src="../shared/campaign/AFTERSIGNAL_CAMPAIGN_DATA_CH01_05.js?build=20260930c2"></script><script src="../shared/campaign/AFTERSIGNAL_CAMPAIGN_DATA_CH06_15.js?build=20260929c9"></script><script src="../shared/campaign/AFTERSIGNAL_CAMPAIGN_V1.js?build=20260929c9"></script><script src="../shared/campaign/AFTERSIGNAL_CAMPAIGN_VOICE_CH01_05.js?build=20260929vl1"></script><script src="../shared/campaign/AFTERSIGNAL_CAMPAIGN_VOICE_CH06_15.js?build=20260929vl1"></script></head><body data-af-campaign-story="v1"><main id="stage" class="stage">
+<div class="bgwrap"><div id="bgstrip" class="bgstrip"></div></div><div class="haze"></div><div id="mobs"></div><img id="boss" class="cs-boss" alt=""><div id="cast"></div><div class="vignette"></div><div class="grain"></div>
+<header class="top"><div class="chapter" id="chapterLabel">CHAPTER<b id="stageTitle"></b></div><nav class="controls"><button id="hide" class="ctrl">HIDE</button><button id="auto" class="ctrl">AUTO</button><button id="log" class="ctrl">LOG</button><button id="skip" class="ctrl">SKIP</button><button id="sound" class="ctrl active">BGM</button></nav></header>
+<section id="textbox" class="textbox"><div><span id="speaker" class="speaker"></span><span id="label" class="label"></span></div><div id="dialogue" class="dialogue"></div><i class="next">⌄</i></section>
+<section id="chapterCard" class="chapter-card"></section><aside id="history" class="history"></aside><audio id="bgm" loop preload="auto"></audio><div id="gate" class="audio-gate off"><button>화면을 눌러 기록 재생</button></div></main>
+<script>(()=>{
+"use strict";
+const C=window.AfterSignalCampaign,$=id=>document.getElementById(id),esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+const embedded=window.parent&&window.parent!==window;
+let launch=C.readLaunch();
+if(!launch){const f=C.frontier();if(!f){C.navigate(embedded?"lobby":"campaign");return;}launch={stageId:f,phase:"intro"};}
+const stage=C.byId.get(launch.stageId),chapter=C.chapterOf(stage.id),phase=launch.phase==="outro"?"outro":"intro";
+const commander=()=>localStorage.getItem("aftersignal:commander-name:v3")||"사령관";
+const actorsData=C.data.actors,enemyData=C.enemies;
+const bossSpec=stage.boss?enemyData.get(stage.boss):null;
+const mobSpecs=stage.mobs.map(id=>enemyData.get(id));
+const bossName=id=>{const m=/^boss:c(\d\d)_(\d\d)$/.exec(id||"");if(!m)return"";const e=enemyData.get(`c${m[1]}_boss_${m[2]}`);return e?e.name:"";};
+const speakerName=key=>key==="commander"?(commander()==="사령관"?"사령관":commander()+" 사령관"):String(key||"").startsWith("boss:")?bossName(key):(actorsData[key]?.name||key);
+/* ---------- scenes ---------- */
+const typeTag=stage.type==="CHAPTER_BOSS"?" · CHAPTER BOSS":stage.type==="MIDBOSS"?" · MIDBOSS":"";
+const scenes=[];
+const load=()=>new Promise((resolve,reject)=>{const root=window.AfterSignalCampaignStory||{};if(root[chapter.id])return resolve(root[chapter.id]);const s=document.createElement("script");s.src=`../shared/campaign/AFTERSIGNAL_CAMPAIGN_STORY_${chapter.id}.js?build=20260927c1`;s.onload=()=>resolve(window.AfterSignalCampaignStory[chapter.id]);s.onerror=reject;document.head.append(s);});
+function build(story){
+  const rows=(story[stage.id]||{intro:[],outro:[]})[phase];
+  const place=`${stage.code} // ${stage.title}`;
+  if(phase==="intro"){
+    scenes.push({card:true,label:`CHAPTER ${String(chapter.no).padStart(2,"0")} // ${stage.code}${typeTag}`,title:stage.title,text:stage.no===1?`${chapter.title}<br><span style="color:#9ceaf1">${esc(chapter.region)}</span>`:esc(chapter.title),boss:stage.type!=="NORMAL",enemies:true});
+    for(const [k,s,t] of rows)scenes.push({kind:k,speaker:s,text:t,label:k==="n"?place:"",enemies:true});
+    const foes=stage.type==="NORMAL"?mobSpecs.map(m=>m.name).join(" · "):`${stage.type==="CHAPTER_BOSS"?"장 보스":"중간보스"} — ${bossSpec.name}`;
+    if(!rows.length){/* CAMPAIGN_CH06_15_V1: a stage without intro scenes gets one briefing card that opens the fight */const first=scenes.pop();scenes.push({...first,end:"combat",text:`${first.text}<br><span style="color:#ffc775">${esc(foes)}</span>`});}else scenes.push({card:true,end:"combat",label:`NEXT // COMBAT ${stage.code}`,title:stage.type==="NORMAL"?"교전 개시":bossSpec.name,text:esc(foes),boss:stage.type!=="NORMAL",enemies:true});
+  }else{
+    let epilogue=false;
+    for(const [k,s,t] of rows){if(k==="epi"){epilogue=true;scenes.push({card:true,label:`CHAPTER ${String(chapter.no).padStart(2,"0")} // EPILOGUE`,title:t,text:esc(chapter.title)});continue;}scenes.push({kind:k,speaker:s,text:t,label:k==="n"?(epilogue?`EPILOGUE // ${chapter.id}`:place):""});}
+    const next=C.nextStageId(stage.id),nextStage=next?C.byId.get(next):null,chapterEnd=stage.type==="CHAPTER_BOSS";
+    scenes.push({card:true,end:"map",label:`STAGE CLEAR // ${stage.code}`,title:chapterEnd?`CHAPTER ${String(chapter.no).padStart(2,"0")} 완료`:stage.title,text:chapterEnd?(nextStage?`CHAPTER ${String(nextStage.chapter.slice(2)).padStart(2,"0")} 개방 — ${esc(C.chapters.get(nextStage.chapter).title)}`:(chapter.no>=15?"AFTER SIGNAL 본편 완료":"다음 챕터 준비 중")):(nextStage?`다음 작전 — ${nextStage.code} ${esc(nextStage.title)}`:"")});
+  }
+}
+/* ---------- layout ---------- */
+const bgImgs=[],mobImgs=[],actorImgs=new Map();
+function setupBackground(){const set=C.background(stage.id),strip=$("bgstrip");for(const layer of set.layers){const img=new Image();img.src=layer.source;img.alt="";img.decoding="async";strip.append(img);bgImgs.push(img);}}
+function setupEnemies(){
+  const host=$("mobs"),slots=stage.type==="NORMAL"?[0,1,0,1]:[0,1];
+  slots.forEach((which,i)=>{const spec=mobSpecs[which],img=new Image();img.src=spec.asset;img.alt="";img.className="cs-mob";img.dataset.slot=String(i);img.dataset.which=String(which);host.append(img);mobImgs.push({img,spec,slot:i});});
+  if(bossSpec){const img=$("boss");img.src=bossSpec.asset;img.alt=bossSpec.name;}
+}
+function actorImg(key){if(actorImgs.has(key))return actorImgs.get(key);const a=actorsData[key];if(!a?.src)return null;const img=new Image();img.src=a.src;img.alt=a.name;img.className="cs-actor"+(a.tint==="origin"?" origin":"");img.addEventListener("load",layout);$("cast").append(img);actorImgs.set(key,img);return img;}
+const portrait=()=>innerHeight>innerWidth*1.05;
+function placeByBox(img,box,{cx,feet,height,center}){ // height = drawn alpha-body height; feet = y of body bottom, or center = y of body centre
+  const bh=Math.max(.05,box.b-box.t),ih=height/bh,iw=ih*box.w/box.h,top=center!=null?center-(box.t+bh/2)*ih:feet-box.b*ih;
+  Object.assign(img.style,{height:ih+"px",width:iw+"px",left:(cx-(box.l+box.r)/2*iw)+"px",top:top+"px"});
+}
+let onStage=[];
+function layout(){
+  const vw=innerWidth,vh=innerHeight,p=portrait(),stripW=vh*3.2,strip=$("bgstrip");
+  strip.style.width=stripW+"px";strip.style.left=((vw-stripW)/2)+"px";
+  const scene=scenes[index]||{},bossOn=Boolean(bossSpec&&scene.enemies&&stage.type!=="NORMAL");
+  // enemies stand in the background ground band (LAYER2 area) or hover in the mid band, behind the cast
+  const mobPos=p?[[.2,.47],[.8,.4],[.36,.44],[.66,.4]]:[[.13,.62],[.87,.58],[.34,.56],[.66,.55]];
+  mobImgs.forEach(({img,spec,slot})=>{const box=spec.box,aerial=spec.depthBand==="background2",[x,y]=bossOn?(p?[[.12,.46],[.88,.42]][slot%2]:[[.1,.6],[.9,.56]][slot%2]):mobPos[slot],depth=slot>1?.82:1;
+    placeByBox(img,box,aerial?{cx:x*vw,center:(p?.3:.33)*vh+(slot%2)*vh*.04,height:(p?.12:.2)*vh*depth}:{cx:x*vw,feet:y*vh,height:(p?.17:.3)*vh*depth});});
+  if(bossSpec){const box=bossSpec.box,aerial=bossSpec.movement?.mode==="aerial_orbit";placeByBox($("boss"),box,aerial?{cx:vw/2,center:(p?.3:.38)*vh,height:(p?.36:.58)*vh}:{cx:vw/2,feet:(p?.52:.72)*vh,height:(p?.4:.62)*vh});}
+  // cast: stable slots; the speaker is bright, the rest dim. With a boss on screen the centre stays free.
+  const n=onStage.length,xs=p?{1:[.5],2:[.3,.7],3:[.2,.5,.8]}[n]||[]:(bossOn?{1:[.8],2:[.2,.8],3:[.14,.34,.84]}:{1:[.72],2:[.28,.72],3:[.17,.5,.83]})[n]||[];
+  const bodyH=p?Math.min(vh*.62,vw*1.25):Math.min(vh*.86,860),feet=p?vh*.8:vh*1.05;
+  onStage.forEach((key,i)=>{const img=actorImgs.get(key),a=actorsData[key];if(!img||!a?.box)return;const box=a.box,cap=img.naturalHeight?1.4*img.naturalHeight*(box.b-box.t):Infinity;placeByBox(img,box,{cx:xs[i]*vw,feet,height:Math.min(bodyH*(key==="haneul"?.92:1),cap)});});
+}
+/* ---------- playback ---------- */
+let index=0,auto=false,autoTimer=0;const history=[];
+function stageActors(scene){
+  if(scene.card){return;}
+  const key=scene.speaker;
+  if(scene.kind==="d"&&key&&actorsData[key]?.src){if(!onStage.includes(key)){const max=portrait()?1:(bossSpec&&scene.enemies&&stage.type!=="NORMAL"?2:3);if(onStage.length>=max)onStage.shift();onStage.push(key);}else{onStage=onStage.filter(k=>k!==key);onStage.push(key);}}
+  // keep slot order stable: sort by first appearance in this stage's cast
+  const castOrder=stage.cast;onStage.sort((a,b)=>castOrder.indexOf(a)-castOrder.indexOf(b));
+}
+/* CAMPAIGN_VOICE_V1 (2026-09-27): each dialogue line plays its approved v2 recording; narration, cards and commander lines stop it */
+let voicedIndex=-1;
+function voice(scene){if(voicedIndex===index)return;voicedIndex=index;const V=window.AfterSignalCampaignVoice;if(!V)return;if(scene.card||scene.kind!=="d")V.stop();else V.say(scene.speaker,scene.text,"chapterStory");}
+function paint(){
+  const scene=scenes[index];stageActors(scene);
+  const speaking=scene.kind==="d"?scene.speaker:null;
+  for(const key of onStage)actorImg(key);
+  actorImgs.forEach((img,key)=>{const shown=onStage.includes(key)&&!scene.card;img.classList.toggle("show",shown);img.classList.toggle("dim",shown&&speaking!==key);});
+  const foes=Boolean(scene.enemies);
+  mobImgs.forEach(({img})=>img.classList.toggle("show",foes));
+  const boss=$("boss");boss.classList.toggle("show",Boolean(bossSpec&&foes&&stage.type!=="NORMAL"));boss.classList.toggle("speak",String(speaking||"").startsWith("boss:"));
+  layout();
+  const card=$("chapterCard");card.classList.toggle("show",Boolean(scene.card));card.classList.toggle("boss",Boolean(scene.boss));
+  if(scene.card){card.innerHTML=`<div><small>${esc(scene.label)}</small><h1>${esc(scene.title)}</h1><p>${scene.text||""}</p>${scene.end?`<span class="go">${scene.end==="combat"?"작전 개시":"작전 지도로"}</span>`:""}</div>`;$("textbox").style.display="none";}
+  else{const tb=$("textbox");tb.style.display="";tb.toggleAttribute("data-af-narration",scene.kind==="n");tb.classList.toggle("boss-line",String(speaking||"").startsWith("boss:"));tb.classList.toggle("comm-line",Boolean(speaking&&speaking!=="commander"&&!speaking.startsWith("boss:")&&!actorsData[speaking]?.src));$("speaker").textContent=scene.kind==="n"?"":speakerName(scene.speaker);$("label").textContent=scene.label||"";$("dialogue").textContent=scene.text;}
+  if(!scene.card&&!history.some(x=>x.i===index))history.push({i:index,s:scene.kind==="n"?"":speakerName(scene.speaker),t:scene.text});
+  $("history").innerHTML=history.map(x=>x.s?`<div><b>${esc(x.s)}</b><br>${esc(x.t)}</div>`:`<div data-af-narration>${esc(x.t)}</div>`).join("");
+  voice(scene);
+  clearTimeout(autoTimer);if(auto&&!scenes[index].end)autoTimer=setTimeout(next,Math.max(2400,String(scene.text||"").length*58,window.AfterSignalCampaignVoice?.holdMs()||0));
+}
+function finish(){const scene=scenes[scenes.length-1];if(scene.end==="combat")C.launch(stage.id,"combat");else{C.writeLaunch({stageId:C.nextStageId(stage.id)||stage.id,phase:"map",from:stage.id});C.navigate("campaign");}}
+function next(){if(index<scenes.length-1){index++;paint()}else finish()}
+function prev(){if(index>0){index--;paint()}}
+function toggleAuto(){auto=!auto;$("auto").classList.toggle("active",auto);paint()}
+/* ---------- controls (same contract as the prologue story controls: HIDE [H] AUTO [A] LOG [L] SKIP [S]) ---------- */
+const nav=document.querySelector(".controls");nav.classList.add("af-story-controls");
+for(const [id,label,key] of [["hide","HIDE","H"],["auto","AUTO","A"],["log","LOG","L"],["skip","SKIP","S"]]){const b=$(id);b.classList.add("af-story-control");b.dataset.afStoryAction=id;b.innerHTML=`<span>${label}</span><kbd aria-hidden="true">${key}</kbd>`;}
+$("sound").classList.add("af-story-control");$("sound").dataset.afStoryAction="sound";
+$("stage").addEventListener("pointerup",e=>{if(e.target.closest("button")||e.target.closest("#history"))return;next()});
+document.addEventListener("keydown",e=>{if(e.repeat||e.altKey||e.ctrlKey||e.metaKey)return;if(e.code==="Space"||e.code==="Enter"){e.preventDefault();next()}else if(e.code==="ArrowLeft")prev();else if(e.code==="KeyH")$("hide").click();else if(e.code==="KeyA")$("auto").click();else if(e.code==="KeyL")$("log").click();else if(e.code==="KeyS")$("skip").click();});
+$("hide").onclick=()=>$("stage").classList.toggle("hidden-ui");$("auto").onclick=toggleAuto;$("log").onclick=()=>$("history").classList.toggle("show");
+$("skip").onclick=()=>{index=scenes.length-1;paint()};
+const bgm=$("bgm"),track=C.data.bgmTracks[stage.bgm];
+$("sound").onclick=()=>{if(embedded)return;if(bgm.paused){bgm.play().catch(()=>{});$("sound").classList.add("active")}else{bgm.pause();$("sound").classList.remove("active")}};
+addEventListener("resize",layout);addEventListener("orientationchange",layout);
+/* ---------- boot ---------- */
+$("chapterLabel").firstChild.textContent=`CHAPTER ${String(chapter.no).padStart(2,"0")} // ${stage.code}${typeTag}`;$("stageTitle").textContent=stage.title;document.title=`AFTER SIGNAL — ${stage.code} ${stage.title}`;
+document.body.dataset.afCampaignStage=stage.id;document.body.dataset.afCampaignPhase=phase;
+setupBackground();setupEnemies();
+load().then(story=>{build(story);document.body.dataset.afCampaignScenes=String(scenes.length);
+  if(embedded){C.bgm(stage.bgm);paint();}
+  else{bgm.src="../"+track.src;$("gate").classList.remove("off");$("gate").onclick=()=>{bgm.volume=.38;bgm.play().catch(()=>{});$("gate").classList.add("off");voicedIndex=-1;paint()};paint();}
+}).catch(()=>{scenes.push({card:true,end:phase==="intro"?"combat":"map",label:stage.code,title:stage.title,text:""});paint();});
+window.__AF_CAMPAIGN_STORY__=Object.freeze({stage,phase,scenes,get index(){return index},next,prev,layout,onStage:()=>[...onStage]});
+})();</script></body></html>

@@ -1,0 +1,11 @@
+{
+  "id": "threatInterception",
+  "displayName": "위협체 요격",
+  "resetType": "WEEKLY_CERTIFICATION_DAILY_ATTEMPTS",
+  "tiers": [
+    { "id": "C", "rank": 0, "bossId": "renewal_signal_warden", "runtimeHp": 720 },
+    { "id": "B", "rank": 1, "bossId": "renewal_signal_warden", "runtimeHp": 1040 },
+    { "id": "A", "rank": 2, "bossId": "renewal_mira_voice_echo", "runtimeHp": 1480 },
+    { "id": "S", "rank": 3, "bossId": "renewal_mira_voice_echo", "runtimeHp": 2080 }
+  ]
+}
