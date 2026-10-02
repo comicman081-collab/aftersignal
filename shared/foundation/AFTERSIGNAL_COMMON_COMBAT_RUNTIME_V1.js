@@ -231,7 +231,7 @@
     damage(enemy,amount,spec,owner=null,hitPoint=null){if(owner)this.waveContributors.add(owner.slot);enemy.hit=.18;const aimPoint=hitPoint||enemy.lastHitPoint||this.enemyAimPoint?.(enemy)||{x:enemy.x,y:enemy.y};enemy.lastHitPoint=null;this.impacts.push({x:aimPoint.x,y:aimPoint.y,spec,age:0});const isUltimateImpact=Boolean(this.ultimateSequence?.damageApplied&&owner===this.ultimateSequence.owner&&amount===this.ultimateSequence.ultimate?.damage),impactKind=isUltimateImpact?"ULTIMATE":amount>24?"HEAVY":"NORMAL";this.applyHitStop(impactKind,spec.impact.hitStop,owner?.spec?.id||"player");this.camera=Math.max(this.camera,spec.impact.camera);if(this.bossNodesRemaining(enemy)){const node=enemy.bossRuntime.nodes.find(candidate=>!candidate.broken);node.hp=Math.max(0,node.hp-amount);if(node.hp===0){node.broken=true;this.trace("boss_node_broken",{bossId:enemy.spec.id,nodeId:node.id,phaseIndex:enemy.bossRuntime.phaseIndex});if(!this.bossNodesRemaining(enemy))this.enterBossPhase(enemy,enemy.bossRuntime.phaseIndex+1);}return;}const bossRuntime=enemy.bossRuntime;if(bossRuntime&&bossRuntime.config.lethalPolicy==="FINAL_PHASE_ONLY"&&bossRuntime.phaseIndex<bossRuntime.config.phases.length-1){enemy.hp=Math.max(1,enemy.hp-amount);this.trace("boss_lethal_gated",{bossId:enemy.spec.id,phaseIndex:bossRuntime.phaseIndex});return;}enemy.hp=Math.max(0,enemy.hp-amount);if(enemy.hp===0){enemy.alive=false;this.enemies=this.enemies.filter(candidate=>candidate!==enemy);this.enemyProjectiles=this.enemyProjectiles.filter(shot=>shot.source!==enemy);this.trace("enemy_defeated",{wave:this.wave+1,enemyId:enemy.spec.id,cancelledScheduledDamage:true});this.session.emit("onEnemyDefeated",enemy);this.session.objective.progress++;}}
     guardCompletionNavigation(){const candidate=window.aftersignalCompleteBattle;if(candidate&&candidate!==this.__afCompletionGuard){this.__afCanonicalCompleteBattle=candidate;this.__afCompletionGuard=()=>this.__afCompletionConfirmed?this.__afCanonicalCompleteBattle?.():false;window.aftersignalCompleteBattle=this.__afCompletionGuard;}return this.__afCompletionGuard||null;}
     commitReward(){if(this.rewardCommitted){this.qa.duplicateReward++;return false;}this.rewardCommitted=true;this.qa.rewardCommitCount++;this.qa.nextStageCommitCount++;const detail={stageId:this.stageId,nextStage:this.session.stageSpec.nextStage,transactionId:`${this.stageId}:${this.session.objective.progress}`,reward:this.session.stageSpec.reward};this.session.commands.playCue("reward_commit");this.trace("reward_commit",detail);this.guardCompletionNavigation();window.dispatchEvent(new CustomEvent("aftersignal:reward-committed",{detail}));return true;}
-    update(dt){if(!this.running)return;this.session.party.tick(dt);this.updateBossPhases(dt);if(this.integrity){this.integrity.value=Math.max(this.integrity.minimum??0,this.integrity.value-dt*this.enemies.length*(this.integrity.drainPerEnemyPerSecond||0));window.dispatchEvent(new CustomEvent("aftersignal:integrity-change",{detail:{stageId:this.stageId,integrity:this.integrity.value}}));if(this.integrity.value<=((this.integrity.minimum??0))&&this.enemies.length){this.running=false;this.qa.defeatEventCount++;this.trace("environment_failed",{integrity:this.integrity.value});this.session.emit("onBattleLost",{reason:"environment_integrity"});document.querySelector("#result")?.classList.remove("hidden");return;}}if(this.hitStop>0){this.hitStop-=dt;return}const selected=this.selected();for(const player of this.players){if(!player||player.member.state===F.PartyMemberState.DEAD)continue;player.cooldown=Math.max(0,player.cooldown-dt);player.member.ultimateGauge=clamp(player.member.ultimateGauge+dt*8,0,100);const controller=this.session.controllers.get(player.spec.id);controller?.update(dt,{x:player.x,y:player.y});if(controller?.clip.state!==F.CharacterState.FIRE)controller?.setState(player===selected?(this.pointer.down?F.CharacterState.AIM:F.CharacterState.STAND):F.CharacterState.AIM);const shouldFire=(this.isAutoControlled(player)&&this.enemies.some(enemy=>enemy.alive!==false&&enemy.hp>0))||(!this.isAutoControlled(player)&&this.pointer.down);this.advanceTrigger(player,dt,shouldFire);}for(const projectile of this.projectiles){projectile.px=projectile.x;projectile.py=projectile.y;projectile.x+=projectile.vx*dt;projectile.y+=projectile.vy*dt;projectile.age+=dt;const enemy=this.enemies.find(candidate=>this.projectileHitsEnemy(projectile,candidate));if(enemy){this.damage(enemy,projectile.heavy?Math.round(24+31*clamp(projectile.charge??1,0,1)):24,projectile.spec,projectile.owner);projectile.age=projectile.life;}}this.projectiles=this.projectiles.filter(projectile=>projectile.age<projectile.life&&projectile.x<this.width+80&&projectile.y>-80);this.impacts.forEach(impact=>impact.age+=dt);this.impacts=this.impacts.filter(impact=>impact.age<.7);this.ultimateFx.forEach(effect=>effect.age+=dt);this.ultimateFx=this.ultimateFx.filter(effect=>effect.age<effect.life);const requiredContributors=this.session.battleSpec.objective.minDistinctContributors||1;if(!this.enemies.length&&!this.completed&&this.waveContributors.size<requiredContributors){this.trace("contributor_gate_retry",{wave:this.wave+1,contributors:this.waveContributors.size,required:this.session.battleSpec.objective.minDistinctContributors||1});window.dispatchEvent(new CustomEvent("aftersignal:objective-contributor-retry",{detail:{stageId:this.stageId,wave:this.wave+1,contributors:this.waveContributors.size,required:this.session.battleSpec.objective.minDistinctContributors||1}}));this.spawnWave();}else if(!this.enemies.length&&this.wave<this.session.battleSpec.waves.length-1){const completedWave=this.wave+1;this.session.objective.progress=completedWave;this.session.emit("onObjectiveProgress",{id:this.session.objective.id,progress:completedWave,required:this.session.battleSpec.objective.requiredKills});this.trace("wave_clear",{wave:completedWave});window.dispatchEvent(new CustomEvent("aftersignal:objective-progress",{detail:{stageId:this.stageId,objectiveId:this.session.objective.id,progress:completedWave,required:this.session.objective.requiredKills}}));this.wave++;this.spawnWave();}else if(!this.enemies.length&&!this.completed){this.completed=true;this.qa.victoryEventCount++;this.session.objective.progress=this.session.battleSpec.objective.requiredKills||this.session.objective.progress;this.trace("battle_clear",{});this.session.commands.completeObjective();this.commitReward();this.session.emit("onBattleWon");this.session.present("onVictory");const result=document.querySelector("#result");if(result)result.classList.remove("hidden");}this.renderHud();this.renderDebug(dt);}
+    update(dt){if(!this.running)return;this.session.party.tick(dt);this.updateBossPhases(dt);if(this.integrity){this.integrity.value=Math.max(this.integrity.minimum??0,this.integrity.value-dt*this.enemies.length*(this.integrity.drainPerEnemyPerSecond||0));window.dispatchEvent(new CustomEvent("aftersignal:integrity-change",{detail:{stageId:this.stageId,integrity:this.integrity.value}}));if(this.integrity.value<=((this.integrity.minimum??0))&&this.enemies.length){this.running=false;this.qa.defeatEventCount++;this.trace("environment_failed",{integrity:this.integrity.value});this.session.emit("onBattleLost",{reason:"environment_integrity"});document.querySelector("#result")?.classList.remove("hidden");return;}}if(this.hitStop>0){this.hitStop-=dt;return}const selected=this.selected();for(const player of this.players){if(!player||player.member.state===F.PartyMemberState.DEAD)continue;player.cooldown=Math.max(0,player.cooldown-dt);player.member.ultimateGauge=clamp(player.member.ultimateGauge+dt*8,0,100);const controller=this.session.controllers.get(player.spec.id);controller?.update(dt,{x:player.x,y:player.y});if(controller?.clip.state!==F.CharacterState.FIRE)controller?.setState(player===selected?(this.pointer.down?F.CharacterState.AIM:F.CharacterState.STAND):F.CharacterState.AIM);const shouldFire=(this.isAutoControlled(player)&&this.enemies.some(enemy=>enemy.alive!==false&&enemy.hp>0))||(!this.isAutoControlled(player)&&this.pointer.down);this.advanceTrigger(player,dt,shouldFire);}for(const projectile of this.projectiles){ballisticsStep(projectile,dt);projectile.px=projectile.x;projectile.py=projectile.y;projectile.x+=projectile.vx*dt;projectile.y+=projectile.vy*dt;projectile.age+=projectile.ageStep??dt;const enemy=this.enemies.find(candidate=>this.projectileHitsEnemy(projectile,candidate));if(enemy){this.damage(enemy,projectile.heavy?Math.round(24+31*clamp(projectile.charge??1,0,1)):24,projectile.spec,projectile.owner);projectile.age=projectile.life;}}this.projectiles=this.projectiles.filter(projectile=>projectile.age<projectile.life&&projectile.x<this.width+80&&projectile.y>-80);this.impacts.forEach(impact=>impact.age+=dt);this.impacts=this.impacts.filter(impact=>impact.age<.7);this.ultimateFx.forEach(effect=>effect.age+=dt);this.ultimateFx=this.ultimateFx.filter(effect=>effect.age<effect.life);const requiredContributors=this.session.battleSpec.objective.minDistinctContributors||1;if(!this.enemies.length&&!this.completed&&this.waveContributors.size<requiredContributors){this.trace("contributor_gate_retry",{wave:this.wave+1,contributors:this.waveContributors.size,required:this.session.battleSpec.objective.minDistinctContributors||1});window.dispatchEvent(new CustomEvent("aftersignal:objective-contributor-retry",{detail:{stageId:this.stageId,wave:this.wave+1,contributors:this.waveContributors.size,required:this.session.battleSpec.objective.minDistinctContributors||1}}));this.spawnWave();}else if(!this.enemies.length&&this.wave<this.session.battleSpec.waves.length-1){const completedWave=this.wave+1;this.session.objective.progress=completedWave;this.session.emit("onObjectiveProgress",{id:this.session.objective.id,progress:completedWave,required:this.session.battleSpec.objective.requiredKills});this.trace("wave_clear",{wave:completedWave});window.dispatchEvent(new CustomEvent("aftersignal:objective-progress",{detail:{stageId:this.stageId,objectiveId:this.session.objective.id,progress:completedWave,required:this.session.objective.requiredKills}}));this.wave++;this.spawnWave();}else if(!this.enemies.length&&!this.completed){this.completed=true;this.qa.victoryEventCount++;this.session.objective.progress=this.session.battleSpec.objective.requiredKills||this.session.objective.progress;this.trace("battle_clear",{});this.session.commands.completeObjective();this.commitReward();this.session.emit("onBattleWon");this.session.present("onVictory");const result=document.querySelector("#result");if(result)result.classList.remove("hidden");}this.renderHud();this.renderDebug(dt);}
     publishRuntimeQa(dt){if(!this.runtimeQaNode)return;const controllers=this.session.controllers,lastProjectile=this.projectiles.at(-1),backgroundSet=STAGE_BACKGROUND_LAYERS[this.stageId];this.runtimeQaNode.textContent=JSON.stringify({stageId:this.stageId,devOnly:this.devOnly,running:this.running,terminalPaused:Boolean(this.terminalPaused),disposed:this.disposed,completed:this.completed,rewardCommitted:this.rewardCommitted,activeCombatLoopCount:this.qa.activeCombatLoopCount,legacyExecutionAttempts:window.__AF_LEGACY_EXECUTION_ATTEMPTS__||0,enemyDamageEventCount:this.qa.enemyDamageEventCount||0,manualRejectCount:this.qa.manualRejectCount||0,transientObjects:{playerProjectiles:this.projectiles.length,enemyProjectiles:this.enemyProjectiles.length,impacts:this.impacts.length,incomingImpacts:this.incomingImpacts.length,damageNumbers:this.damageNumbers.length,ultimateFx:this.ultimateFx.length,ultimateSequence:Boolean(this.ultimateSequence),muzzleFlashes:this.players.filter(Boolean).filter(player=>(player.muzzleFlashClock||0)>0).length},layout:{orientation:this.body.dataset.afCombatOrientation||"landscape",portraitPlayable:this.body.dataset.afPortraitPlayable||"supported",playerDepthBand:"PLAYER_FOREGROUND",groundEnemyMaxY:510,playerBaseline:Number(this.body.dataset.afResponsivePlayerBaseline||this.session.deployment.playerBaseline||614),formation:this.body.dataset.afPlayerFormation||null},memory:{...this.memory,retainedSources:this.images.size,retainedDecodedBytesEstimate:this.disposed?0:this.memory.decodedBytesEstimate},auto:this.auto,pointer:{x:Number(this.pointer.x.toFixed(2)),y:Number(this.pointer.y.toFixed(2)),down:Boolean(this.pointer.down)},players:this.players.filter(Boolean).map(player=>{const controller=controllers.get(player.spec.id),clips=player.spec.combatClips||{};return{id:player.spec.id,slot:player.slot,x:player.x,y:player.y,hp:Number(player.member.hp.toFixed(2)),maxHp:player.member.maxHp,shield:Number(player.member.shield.toFixed(2)),ammo:player.ammo,magazineSize:player.magazineSize,state:controller?.clip.state,stateTime:Number((controller?.clip.stateTime||0).toFixed(3)),coverRequested:Boolean(player.coverRequested),coverClock:Number((player.coverClock||0).toFixed(3)),reloadClock:Number((player.reloadClock||0).toFixed(3)),aimFrame:player.aimFrame||null,aimAngle:Number((player.aimAngle||0).toFixed(4)),aimLogicalFrame:player.aimLogicalFrame??null,muzzle:player.muzzle?{x:Number(player.muzzle.x.toFixed(2)),y:Number(player.muzzle.y.toFixed(2))}:null,battleSprite:player.spec.battleSprite,directionalAuthoredPoses:clips.FIRE_DIRECTIONAL_FRAMES?.length||0,directionalLogicalFrames:clips.FIRE_DIRECTIONAL_FRAME_COUNT||0,projectileId:player.spec.projectileId,projectileSilhouette:F.PROJECTILE_REGISTRY.get(player.spec.projectileId)?.silhouette||null,assetPolicy:player.spec.combatAssetPolicy||null,visualEnvelope:player.visualEnvelope||null}}),enemies:this.enemies.map(enemy=>({id:enemy.spec.id,x:Number(enemy.x.toFixed(2)),y:Number(enemy.y.toFixed(2)),originX:Number(enemy.originX.toFixed(2)),originY:Number(enemy.originY.toFixed(2)),poseDirection:enemy.poseDirection,depthBand:enemy.renderLayer||enemy.spec.depthBand,asset:enemy.spec.asset,hp:enemy.hp,maxHp:enemy.maxHp,attackKind:enemy.telegraphKind||enemy.spec.attack?.kind||null,attackTelegraph:Number((enemy.attackTelegraph||0).toFixed(3)),bossPhase:enemy.bossRuntime?.config?.phases?.[enemy.bossRuntime.phaseIndex]?.id||null,bossHasPendingNodes:enemy.bossRuntime?this.bossNodesRemaining(enemy):null,bossUnbrokenNodeCount:enemy.bossRuntime?enemy.bossRuntime.nodes.filter(node=>!node.broken).length:null})),playerProjectiles:this.projectiles.length,lastPlayerProjectile:lastProjectile?{ownerId:lastProjectile.owner?.spec?.id||null,projectileId:lastProjectile.spec?.id||null,silhouette:lastProjectile.spec?.silhouette||null,x:Number(lastProjectile.x.toFixed(2)),y:Number(lastProjectile.y.toFixed(2)),px:Number(lastProjectile.px.toFixed(2)),py:Number(lastProjectile.py.toFixed(2)),sourceX:Number(lastProjectile.sourceX.toFixed(2)),sourceY:Number(lastProjectile.sourceY.toFixed(2)),vx:Number(lastProjectile.vx.toFixed(2)),vy:Number(lastProjectile.vy.toFixed(2))}:null,enemyProjectiles:(this.enemyProjectiles||[]).length,ultimateSequence:this.ultimateSequence?{ownerId:this.ultimateSequence.owner.spec.id,ultimateId:this.ultimateSequence.ultimate.id,phase:this.ultimateSequence.phase,age:Number(this.ultimateSequence.age.toFixed(3)),battlefieldFxStarted:this.ultimateSequence.battlefieldFxStarted,damageApplied:this.ultimateSequence.damageApplied}:null,eventTrace:this.qa.eventTrace.slice(-32).map(entry=>entry.type),background:{contract:"FOUR_LAYER_PASS_RECOMPOSITION",compositeSha256:backgroundSet?.compositeSha256||null,layers:this.backgroundLayers().map(layer=>({...layer,loaded:Boolean(this.images.get(layer.source)?.naturalWidth)}))},dt:Number((dt||0).toFixed(4))});}
     renderDebug(dt){this.publishRuntimeQa(dt);if(!this.debug.enabled||!this.debugNode)return;this.debug.frameMs=dt*1000;this.debug.fps=dt>0?Math.round(1/dt):0;const active=this.selected(),boss=this.enemies.find(enemy=>enemy.bossRuntime),phase=boss?.bossRuntime?.config?.phases?.[boss.bossRuntime.phaseIndex],nodes=boss?.bossRuntime?.nodes||[],safe=getComputedStyle(document.documentElement).getPropertyValue("env(safe-area-inset-bottom)")||"runtime";const party=this.players.filter(Boolean).map(player=>`${player.spec.id}@S${player.slot+1} ${player.member.state} foot(${Math.round(player.x)},${Math.round(player.y)}) muzzle(${Math.round(player.x)},${Math.round(player.y-playerBodyPx(player)*.7)})`).join("\n");const trails=this.projectiles.slice(-3).map(projectile=>`${projectile.spec.ownerId}: visual(${Math.round(projectile.px)},${Math.round(projectile.py)}→${Math.round(projectile.x)},${Math.round(projectile.y)}) trail=${projectile.spec.trail.kind}/${projectile.spec.trail.width} collisionScale=${projectile.spec.collisionScale}`).join("\n")||"none";this.debugNode.textContent=`VISUAL QA · F3\nFPS ${this.debug.fps} / ${this.debug.frameMs.toFixed(1)}ms · safeBottom ${safe}\nACTIVE ${active?.spec.id||"none"} slot ${active?.slot+1||0}\n${party}\nPROJECTILE\n${trails}\nBOSS ${boss?.spec.id||"none"} phase ${phase?.id||"-"} elapsed ${(boss?.bossRuntime?.phaseElapsed||0).toFixed(2)} nodes ${nodes.filter(node=>!node.broken).length}/${nodes.length}\nHITSTOP ${(this.hitStop*1000).toFixed(0)}ms · CAMERA ${this.camera.toFixed(1)} · HUD ${this.hud?.getBoundingClientRect().height||0}px`;}
     draw(){const shake=this.camera>0?(Math.random()-.5)*this.camera:0;this.camera=Math.max(0,this.camera-.6);const ctx=this.ctx;ctx.save();ctx.translate(shake,shake);ctx.clearRect(-30,-30,this.width+60,this.height+60);const field=ctx.createLinearGradient(0,0,0,this.height);field.addColorStop(0,"#182942");field.addColorStop(.54,"#26394d");field.addColorStop(1,"#060c13");ctx.fillStyle=field;ctx.fillRect(0,0,this.width,this.height);this.enemies.forEach(enemy=>{const size=enemy.bossRuntime?.config?.renderSize||176;if(enemy.img?.complete)ctx.drawImage(enemy.img,enemy.x-size/2,enemy.y-size/2,size,size);else{ctx.fillStyle="#9d6680";ctx.beginPath();ctx.arc(enemy.x,enemy.y,size*.27,0,Math.PI*2);ctx.fill()}if(enemy.bossRuntime){const runtime=enemy.bossRuntime,phase=runtime.config.phases?.[runtime.phaseIndex];ctx.save();ctx.globalCompositeOperation="lighter";ctx.strokeStyle="rgba(196,135,255,.72)";ctx.shadowColor="#c281ff";ctx.shadowBlur=18;ctx.lineWidth=4;ctx.beginPath();ctx.ellipse(enemy.x,enemy.y,size*.48,size*.5,0,0,Math.PI*2);ctx.stroke();runtime.nodes.forEach(node=>{if(node.broken)return;const x=enemy.x+node.offset[0],y=enemy.y+node.offset[1];ctx.fillStyle="#dca0ff";ctx.beginPath();ctx.arc(x,y,18,0,Math.PI*2);ctx.fill();ctx.strokeStyle="#fff0ff";ctx.beginPath();ctx.arc(x,y,27,0,Math.PI*2);ctx.stroke()});if(!runtime.nodes.some(node=>!node.broken)){const glow=ctx.createRadialGradient(enemy.x,enemy.y,0,enemy.x,enemy.y,54);glow.addColorStop(0,"rgba(255,255,255,.95)");glow.addColorStop(.32,"rgba(124,244,255,.78)");glow.addColorStop(1,"transparent");ctx.fillStyle=glow;ctx.fillRect(enemy.x-58,enemy.y-58,116,116)}ctx.restore();ctx.fillStyle="#efe1ff";ctx.font="700 12px ui-monospace";ctx.textAlign="center";ctx.fillText(phase?.id||"BOSS",enemy.x,enemy.y-size*.58)}ctx.fillStyle="#081019";ctx.fillRect(enemy.x-54,enemy.y-size*.62,108,7);ctx.fillStyle="#ff7595";ctx.fillRect(enemy.x-54,enemy.y-size*.62,108*enemy.hp/enemy.maxHp,7)});this.players.forEach(player=>{if(!player)return;const image=this.images.get(player.spec.battleSprite);if(image?.complete)ctx.drawImage(image,player.x-82,player.y-178,164,202);ctx.fillStyle="#0008";ctx.beginPath();ctx.ellipse(player.x,player.y+4,43,8,0,0,Math.PI*2);ctx.fill()});this.projectiles.forEach(projectile=>F.CombatVfxRenderer.drawTrail(ctx,projectile));this.impacts.forEach(impact=>F.CombatVfxRenderer.drawImpact(ctx,impact));this.ultimateFx.forEach(effect=>this.drawUltimateFx(ctx,effect));ctx.restore();}
@@ -730,7 +730,7 @@
     // Never render directly from an instantaneous touch/pointer coordinate.
     // The shared smoothed aim owns the body, muzzle and fired projectile path.
     const target=player.smoothedAim||this.aimTargetFor(player);
-    const raw=Math.atan2(target.y-(player.y-playerBodyPx(player)*.7),target.x-player.x),targetAngle=clamp(raw,-Math.PI,0);
+    const raw0=Math.atan2(target.y-(player.y-playerBodyPx(player)*.7),target.x-player.x),raw=this.reticleAimAngle?.(player,target,raw0)??raw0,targetAngle=clamp(raw,-Math.PI,0);
     const logicalCount=Math.max(2,clips.FIRE_DIRECTIONAL_FRAME_COUNT||frames.length),targetPosition=clamp(((targetAngle+Math.PI)/Math.PI)*(frames.length-1),0,frames.length-1);
     const poseAt=position=>{const authoredPosition=clamp(position,0,frames.length-1),lower=Math.floor(authoredPosition),upper=Math.min(frames.length-1,lower+1),blend=lower===upper?0:smooth01(authoredPosition-lower),poseMuzzle=index=>{const source=frames[index],image=null,anchor=this.poseAnchorFor(player,source),registered=clips.FIRE_DIRECTIONAL_MUZZLES?.[index];return this.posePointToWorld(player,source,image,{x:registered?.[0]??anchor.muzzleX,y:registered?.[1]??anchor.muzzleY,mirror:Boolean(clips.FIRE_DIRECTIONAL_MIRROR?.[index])});},lowerMuzzle=poseMuzzle(lower),upperMuzzle=poseMuzzle(upper),fallback={x:player.x+Math.cos(targetAngle)*92,y:player.y-playerBodyPx(player)*.7+Math.sin(targetAngle)*92},muzzle=lowerMuzzle&&upperMuzzle?{x:mix(lowerMuzzle.x,upperMuzzle.x,blend),y:mix(lowerMuzzle.y,upperMuzzle.y,blend)}:lowerMuzzle||upperMuzzle||fallback,lowerWeaponAngle=clips.FIRE_DIRECTIONAL_ANGLES?.[lower]??targetAngle,upperWeaponAngle=clips.FIRE_DIRECTIONAL_ANGLES?.[upper]??targetAngle;return{authoredPosition,lower,upper,blend,muzzle,weaponAngle:mixAngle(lowerWeaponAngle,upperWeaponAngle,blend)};};
     let authoredPosition=Number.isFinite(player.presentedAuthoredPosition)?player.presentedAuthoredPosition:targetPosition;
@@ -967,14 +967,14 @@
   const coreFire=CommonCombatRunner.prototype.fire;
   CommonCombatRunner.prototype.fire=function(owner,heavy=false){
     const motionFactoryShot=owner?.__afMotionFactoryShot||null;
-    if(owner&&!motionFactoryShot&&this.pointer.down&&!this.isAutoControlled(owner)&&!owner.__afImmediatePress){const target=this.aimTargetFor(owner),targetAngle=clamp(Math.atan2(target.y-(owner.y-playerBodyPx(owner)*.7),target.x-owner.x),-Math.PI,0),presented=owner.muzzle?.angle??targetAngle,turnError=Math.abs(Math.atan2(Math.sin(targetAngle-presented),Math.cos(targetAngle-presented)));if(turnError>.075){owner.pendingFire=true;return false;}}
+    if(owner&&!motionFactoryShot&&this.pointer.down&&!this.isAutoControlled(owner)&&!owner.__afImmediatePress){const target=this.aimTargetFor(owner),rawAngle=Math.atan2(target.y-(owner.y-playerBodyPx(owner)*.7),target.x-owner.x),targetAngle=clamp(this.reticleAimAngle?.(owner,target,rawAngle)??rawAngle,-Math.PI,0),presented=owner.muzzle?.angle??targetAngle,turnError=Math.abs(Math.atan2(Math.sin(targetAngle-presented),Math.cos(targetAngle-presented)));if(turnError>.075){owner.pendingFire=true;return false;}}
     if(owner)owner.pendingFire=false;if(!motionFactoryShot)this.presentAim(owner);const before=this.projectiles.length,result=coreFire.call(this,owner,heavy),projectile=this.projectiles[before];
     if(projectile&&owner?.muzzle){
-      const angle=owner.muzzle.angle,speed=heavy?940:720,shotId=`${this.stageId}:${owner.spec.id}:${owner.shotSequence=(owner.shotSequence||0)+1}`;
+      const angle=owner.muzzle.angle,speed=ballisticsLaunch(projectile,owner,heavy),shotId=`${this.stageId}:${owner.spec.id}:${owner.shotSequence=(owner.shotSequence||0)+1}`;
       const poseSource=owner.aimPose?.primary||owner.aimFrame||owner.spec.battleSprite,poseImage=this.renderableSprite(poseSource,owner.spec.combatAssetPolicy),poseTransform=poseImage?this.spriteTransform(owner,poseSource,poseImage):null;
       const trackedTarget=motionFactoryShot?{x:owner.muzzle.x+Math.cos(angle)*640,y:owner.muzzle.y+Math.sin(angle)*640}:owner.smoothedAim||this.aimTargetFor(owner),targetDistance=Math.hypot(trackedTarget.x-owner.x,trackedTarget.y-(owner.y-playerBodyPx(owner)*.7));
       projectile.shotId=shotId;projectile.charge=clamp(owner.__afChargeCommit??1,0,1);projectile.x=projectile.px=projectile.sourceX=owner.muzzle.x;projectile.y=projectile.py=projectile.sourceY=owner.muzzle.y;projectile.vx=Math.cos(angle)*speed;projectile.vy=Math.sin(angle)*speed;projectile.weaponAngle=angle;
-      const firedPose={shotId,characterId:owner.spec.id,charge:projectile.charge,logicalTick:owner.aimLogicalFrame??null,poseIndex:owner.aimPoseIndex??null,primaryPoseIndex:owner.aimPose?.primaryIndex??null,secondaryPoseIndex:owner.aimPose?.secondaryIndex??null,poseBlend:Number((owner.aimPose?.blend||0).toFixed(4)),bodyTransform:poseTransform?{scalePolicy:poseTransform.scalePolicy,scaleX:Number(poseTransform.scaleX.toFixed(5)),scaleY:Number(poseTransform.scaleY.toFixed(5)),drawX:Number(poseTransform.drawX.toFixed(3)),drawY:Number(poseTransform.drawY.toFixed(3)),drawWidth:Number(poseTransform.drawWidth.toFixed(3)),drawHeight:Number(poseTransform.drawHeight.toFixed(3)),baselineY:owner.y}:null,targetX:Number(trackedTarget.x.toFixed(3)),targetY:Number(trackedTarget.y.toFixed(3)),targetDistance:Number(targetDistance.toFixed(3)),targetAngle:owner.aimTargetAngle??angle,weaponAngle:angle,muzzleX:owner.muzzle.x,muzzleY:owner.muzzle.y,muzzleFlashX:owner.muzzle.x,muzzleFlashY:owner.muzzle.y,projectileSpawnX:projectile.sourceX,projectileSpawnY:projectile.sourceY,projectileAngle:Math.atan2(projectile.vy,projectile.vx),spawnDelta:Number(Math.hypot(projectile.sourceX-owner.muzzle.x,projectile.sourceY-owner.muzzle.y).toFixed(4)),ammoAfter:owner.ammo};
+      const firedPose={shotId,characterId:owner.spec.id,charge:projectile.charge,logicalTick:owner.aimLogicalFrame??null,poseIndex:owner.aimPoseIndex??null,primaryPoseIndex:owner.aimPose?.primaryIndex??null,secondaryPoseIndex:owner.aimPose?.secondaryIndex??null,poseBlend:Number((owner.aimPose?.blend||0).toFixed(4)),bodyTransform:poseTransform?{scalePolicy:poseTransform.scalePolicy,scaleX:Number(poseTransform.scaleX.toFixed(5)),scaleY:Number(poseTransform.scaleY.toFixed(5)),drawX:Number(poseTransform.drawX.toFixed(3)),drawY:Number(poseTransform.drawY.toFixed(3)),drawWidth:Number(poseTransform.drawWidth.toFixed(3)),drawHeight:Number(poseTransform.drawHeight.toFixed(3)),baselineY:owner.y}:null,targetX:Number(trackedTarget.x.toFixed(3)),targetY:Number(trackedTarget.y.toFixed(3)),targetDistance:Number(targetDistance.toFixed(3)),targetAngle:owner.aimTargetAngle??angle,weaponAngle:angle,muzzleX:owner.muzzle.x,muzzleY:owner.muzzle.y,muzzleFlashX:owner.muzzle.x,muzzleFlashY:owner.muzzle.y,projectileSpawnX:projectile.sourceX,projectileSpawnY:projectile.sourceY,projectileAngle:Math.atan2(projectile.vy,projectile.vx),spawnDelta:Number(Math.hypot(projectile.sourceX-owner.muzzle.x,projectile.sourceY-owner.muzzle.y).toFixed(4)),ammoAfter:owner.ammo,projectileSpeed:Number(Math.hypot(projectile.vx,projectile.vy).toFixed(2)),ballisticsGroup:projectile.bal?.family||null};
       projectile.sourceAtFire=firedPose;owner.lastShot=firedPose;owner.muzzleFlashClock=.11;owner.recoilImpulse=Math.min(1,(owner.recoilImpulse||0)+(heavy?.72:.42));this.qa.shotsByCharacter=this.qa.shotsByCharacter||{};this.qa.shotsByCharacter[owner.spec.id]=(this.qa.shotsByCharacter[owner.spec.id]||0)+1;this.trace("ammo_consume_link",{shotId,characterId:owner.spec.id,ammoAfter:owner.ammo,magazineSize:owner.magazineSize});this.trace("player_shot",firedPose);const fireCue=this.characterSfxCues?.[owner.spec.id]?.fire||(owner.spec.id==="sera"?"sera_fire":owner.spec.id==="haneul"?"haneul_fire":"mira_fire");this.playSfx(fireCue);this.trace("fire_sfx_link",{shotId,characterId:owner.spec.id,cue:fireCue});if(owner.ammo===0)this.startReload(owner);
     }
     return result;
@@ -5903,6 +5903,404 @@ ${R} small{font-size:8px!important}}`;
     return disposed;
   };
   // <<< COMBAT_HIRES_CANVAS_V1
+  // >>> COMBAT_BALLISTICS_V1 (2026-10-02, Claude Code; combat_reboot_v1/game_bake_v1/tools/runtime_patches/combat_ballistics_v1.py)
+  // Player projectile speed per WEAPON FAMILY and per CHARACTER. Until now every player shot flew at one speed (720 px/s, charged
+  // 940 px/s) for 1.5 s, so every weapon group looked alike. One speed model now drives everything that is seen or measured:
+  //   v(t) = cruise * (1 - (1 - launch) * exp(-t / tau)),  cruise = family speed x character trim (x charge boost for charged shots)
+  // - motion: still a straight line on the muzzle angle (projectileAngle == weaponAngle, unchanged); only the distance travelled
+  //   along it follows v(t). Each frame moves the exact integral of v over that frame (frame-rate independent), so the swept segment
+  //   (px,py)->(x,y) that the hit test and every streak drawer read IS the real travel of that frame.
+  // - visuals: projectile.age no longer counts wall-clock seconds but FLIGHT PROGRESS in legacy seconds (travelled px / 720). Every
+  //   spin, pulse and taper that reads age (default trails, page-card, drone, star rail, cross seal, 1 - age/life ...) therefore runs
+  //   with the travelled distance: faster on a faster shot, slower on a slower one, and a shot at the old 720 px/s looks as before.
+  //   life is in the same unit (1.5 = 1080 px, charged 1.958 = 1410 px: the old ranges). Wall-clock flight time is projectile.bal.t.
+  // Edit speeds ONLY in the two tables below. ?ballistics=classic (page or shell address) restores the single speed.
+  const BALLISTICS_LEGACY_SPEED=720,BALLISTICS_LEGACY_HEAVY_SPEED=940,BALLISTICS_LEGACY_LIFE=1.5,BALLISTICS_DEFAULT_HM=1.25;
+  const ballisticsClassic=(()=>{const off=value=>/(?:[?&])ballistics=classic(?:&|$)/.test(String(value||""));try{if(off(location.search))return true;}catch{}try{if(off(window.top.location.search))return true;}catch{}return false;})();
+  // weapon family (the family part of the shelter weapon id) -> v: cruise px/s, l: launch speed / cruise, tau: seconds to settle
+  const BALLISTICS_FAMILIES=Object.freeze({
+    AFTERGLOW_VECTOR:{v:1750,l:1,tau:.1},
+    HARMONIC_BEAM:{v:1850,l:1,tau:.1},
+    FORGE_OVERDRIVE:{v:1600,l:.5,tau:.09},
+    R0_RELAY_CARBINE:{v:1500,l:1,tau:.1},
+    VANGUARD_RAIL:{v:1400,l:1,tau:.1},
+    THREAD_PROJECTOR:{v:1350,l:.9,tau:.1},
+    VALE_ADJUDICATOR:{v:1350,l:1.25,tau:.14},
+    HUSH_SEEKER:{v:1250,l:.6,tau:.12},
+    ADJUDICATOR_NEEDLE:{v:1250,l:1,tau:.1},
+    FIELD_SURVEYOR:{v:1150,l:.7,tau:.12},
+    FIELD_SEEKER:{v:1100,l:.55,tau:.15},
+    VANGUARD_PULSE:{v:1000,l:1,tau:.1},
+    ANALOG_HUNTER:{v:980,l:1.5,tau:.2},
+    MODULAR_DRONE:{v:940,l:.3,tau:.34},
+    BASTION_ROTARY:{v:900,l:1.6,tau:.19},
+    CUSTODY_BREACH:{v:860,l:1.7,tau:.17},
+    SEAL_PROJECTOR:{v:860,l:.8,tau:.22},
+    FOUNDRY_WALL:{v:820,l:.85,tau:.18},
+    FOUNDRY_HEAVY:{v:780,l:.7,tau:.26},
+    CROSS_SEAL_PROJECTOR:{v:760,l:.75,tau:.25},
+    PHASE_ANCHOR:{v:740,l:.7,tau:.28},
+    VEGA_FOUNDRY_HEAVY:{v:700,l:.6,tau:.3},
+    ANCHOR_PLATE:{v:660,l:.75,tau:.28},
+    CHOIR_EMITTER:{v:620,l:.7,tau:.34}
+  });
+  // character -> f: weapon family, k: character trim, hm: charge boost of the four charge weapons (full charge = cruise x hm)
+  const BALLISTICS_CREW=Object.freeze({
+    mira:{f:"R0_RELAY_CARBINE",k:1},
+    haneul:{f:"HUSH_SEEKER",k:1.08},
+    sera:{f:"ANALOG_HUNTER",k:1.12,hm:1.2},
+    astra:{f:"AFTERGLOW_VECTOR",k:1},
+    tessa:{f:"FOUNDRY_HEAVY",k:1.06},
+    naru:{f:"THREAD_PROJECTOR",k:1},
+    karin:{f:"VEGA_FOUNDRY_HEAVY",k:1},
+    serin:{f:"SEAL_PROJECTOR",k:1.12,hm:1.3},
+    luna:{f:"FOUNDRY_WALL",k:1},
+    arin:{f:"MODULAR_DRONE",k:.94},
+    jaein:{f:"MODULAR_DRONE",k:1.06},
+    roa:{f:"FORGE_OVERDRIVE",k:1,hm:1.25},
+    noella:{f:"CROSS_SEAL_PROJECTOR",k:1,hm:1.35},
+    ria:{f:"VANGUARD_PULSE",k:1.05},
+    bomin:{f:"VANGUARD_RAIL",k:1},
+    orin:{f:"VALE_ADJUDICATOR",k:1.04},
+    yunseo:{f:"SEAL_PROJECTOR",k:.9},
+    yura:{f:"FIELD_SEEKER",k:1},
+    yeonhwa:{f:"ANCHOR_PLATE",k:.9},
+    narae:{f:"ANALOG_HUNTER",k:1},
+    moa:{f:"ANCHOR_PLATE",k:1.06},
+    yumi:{f:"ADJUDICATOR_NEEDLE",k:1},
+    sion:{f:"FORGE_OVERDRIVE",k:.92},
+    haejin:{f:"FOUNDRY_HEAVY",k:.9},
+    eve:{f:"HARMONIC_BEAM",k:.92},
+    sea:{f:"CHOIR_EMITTER",k:1.06},
+    seorin:{f:"CHOIR_EMITTER",k:.92},
+    lumi:{f:"PHASE_ANCHOR",k:1.1},
+    iona:{f:"HARMONIC_BEAM",k:1},
+    somi:{f:"BASTION_ROTARY",k:.92},
+    mei:{f:"FIELD_SURVEYOR",k:1},
+    yuria:{f:"HARMONIC_BEAM",k:.96},
+    soha:{f:"HARMONIC_BEAM",k:.95},
+    liora:{f:"CUSTODY_BREACH",k:1.12},
+    bella:{f:"FIELD_SURVEYOR",k:1.05},
+    dana:{f:"VANGUARD_PULSE",k:.95},
+    chaerin:{f:"SEAL_PROJECTOR",k:1.06},
+    yujin:{f:"BASTION_ROTARY",k:1.08},
+    harin:{f:"CUSTODY_BREACH",k:.94},
+    dabin:{f:"PHASE_ANCHOR",k:.9}
+  });
+  // fallback for a character that is not listed above: family by projectile silhouette, trim by fire interval
+  const BALLISTICS_SILHOUETTE_FAMILY=Object.freeze({
+    "rail-dart":"R0_RELAY_CARBINE",
+    "twin-flechette":"HUSH_SEEKER",
+    "analog-lance":"ANALOG_HUNTER",
+    "star-rail":"AFTERGLOW_VECTOR",
+    "page-card":"MODULAR_DRONE",
+    "drone-dart":"MODULAR_DRONE",
+    "coil-bolt":"FORGE_OVERDRIVE",
+    "coil-rail-bolt":"FORGE_OVERDRIVE",
+    "cross-seal":"CROSS_SEAL_PROJECTOR",
+    "vanguard-pulse":"VANGUARD_PULSE",
+    "fork-pulse":"VANGUARD_PULSE",
+    "amber-rail":"VANGUARD_RAIL",
+    "twin-needle":"VALE_ADJUDICATOR",
+    "adjudicator-needle":"ADJUDICATOR_NEEDLE",
+    "lattice-pulse":"FIELD_SEEKER",
+    "channel-vane":"ANCHOR_PLATE",
+    "anchor-plate":"ANCHOR_PLATE",
+    "slag-bolt":"FOUNDRY_HEAVY",
+    "gull-vane":"HARMONIC_BEAM",
+    "twin-beat":"HARMONIC_BEAM",
+    "split-rail-key":"HARMONIC_BEAM",
+    "twin-prong-pulse":"CHOIR_EMITTER",
+    "bell-chord":"CHOIR_EMITTER",
+    "crystal-beat":"PHASE_ANCHOR",
+    "refuge-cell":"PHASE_ANCHOR",
+    "rotary-shell":"BASTION_ROTARY",
+    "bastion-burst":"BASTION_ROTARY",
+    "tag-dart":"FIELD_SURVEYOR",
+    "scanner-dart":"FIELD_SURVEYOR",
+    "crest-lance":"CUSTODY_BREACH",
+    "breach-slug":"CUSTODY_BREACH",
+    "hunter-slug":"ANALOG_HUNTER",
+    "seal-glyph":"SEAL_PROJECTOR",
+    "route-arc":"SEAL_PROJECTOR"
+  });
+  const ballisticsProfileFor=spec=>{
+    const id=spec?.id,crew=BALLISTICS_CREW[id];let family=crew?.f,k=crew?.k??1;
+    if(!family){
+      const silhouette=F.PROJECTILE_REGISTRY?.get?.(spec?.projectileId)?.silhouette,interval=Number(spec?.combatTiming?.normalFireInterval)||.5;
+      family=BALLISTICS_SILHOUETTE_FAMILY[silhouette]||"VANGUARD_PULSE";k=Math.max(.9,Math.min(1.1,1.08-.12*Math.min(1,interval/1.2)));
+    }
+    return {id,family,k,hm:crew?.hm??BALLISTICS_DEFAULT_HM,f:BALLISTICS_FAMILIES[family]||BALLISTICS_FAMILIES.VANGUARD_PULSE};
+  };
+  const ballisticsDistance=(b,t)=>b.cruise*(t-(1-b.launch)*b.tau*(1-Math.exp(-t/b.tau)));
+  const ballisticsSpeed=(b,t)=>b.cruise*(1-(1-b.launch)*Math.exp(-t/b.tau));
+  const ballisticsState=(profile,heavy,charge)=>{
+    const boost=heavy?1+(profile.hm-1)*charge:1,b={id:profile.id,family:profile.family,k:profile.k,charge,boost,cruise:profile.f.v*profile.k*boost,launch:profile.f.l,tau:profile.f.tau,t:0,travel:0,ux:0,uy:0,speed:0,v0:0};
+    b.v0=b.speed=ballisticsSpeed(b,0);return b;
+  };
+  // Called by the fire override right after the core fire created the projectile: attaches the flight model and returns the launch speed.
+  function ballisticsLaunch(projectile,owner,heavy){
+    const legacy=heavy?BALLISTICS_LEGACY_HEAVY_SPEED:BALLISTICS_LEGACY_SPEED;
+    if(ballisticsClassic||!projectile||!owner?.spec)return legacy;
+    try{
+      const charge=heavy?Math.max(0,Math.min(1,Number(owner.__afChargeCommit??1)||0)):0,b=ballisticsState(ballisticsProfileFor(owner.spec),heavy,charge);
+      projectile.bal=b;projectile.life=heavy?BALLISTICS_LEGACY_LIFE*BALLISTICS_LEGACY_HEAVY_SPEED/BALLISTICS_LEGACY_SPEED:BALLISTICS_LEGACY_LIFE;
+      return b.v0;
+    }catch{delete projectile.bal;return legacy;}
+  }
+  // Called by the base update loop before each projectile moves: velocity = the frame's exact travel / dt along the launch direction.
+  function ballisticsStep(projectile,dt){
+    const b=projectile.bal;
+    if(!b||!(dt>0))return;
+    if(!b.ux&&!b.uy){const length=Math.hypot(projectile.vx,projectile.vy)||1;b.ux=projectile.vx/length;b.uy=projectile.vy/length;}
+    const t1=b.t+dt,ds=ballisticsDistance(b,t1)-ballisticsDistance(b,b.t),v=ds/dt;
+    b.t=t1;b.travel+=ds;b.speed=ballisticsSpeed(b,t1);
+    projectile.vx=b.ux*v;projectile.vy=b.uy*v;projectile.ageStep=ds/BALLISTICS_LEGACY_SPEED;
+  }
+  window.AfterSignalBallistics=Object.freeze({version:"COMBAT_BALLISTICS_V1",classic:ballisticsClassic,legacySpeed:BALLISTICS_LEGACY_SPEED,families:BALLISTICS_FAMILIES,crew:BALLISTICS_CREW,silhouetteFamily:BALLISTICS_SILHOUETTE_FAMILY,
+    profileFor:ballisticsProfileFor,distance:ballisticsDistance,speed:ballisticsSpeed,
+    describe:(spec,{heavy=false,charge=1}={})=>{const b=ballisticsState(ballisticsProfileFor(spec),Boolean(heavy),heavy?Math.max(0,Math.min(1,charge)):0);return{family:b.family,k:b.k,boost:b.boost,cruise:b.cruise,launchSpeed:b.v0,launch:b.launch,tau:b.tau};}});
+  // <<< COMBAT_BALLISTICS_V1
+  // >>> COMBAT_RETICLE_V2 (2026-10-02, Claude Code; combat_reboot_v1/game_bake_v1/tools/runtime_patches/combat_reticle_v2.py)
+  // NIKKE-style aim reticle that is also ACCURATE. Look: four detached bold bars with a dark outline and halo, a red lock frame on the enemy's
+  // real hit area (bars close in, turn red and rotate to an X), charge / reload ring, hit burst, per-weapon kick, magazine box, faint guide lines.
+  // Accuracy: presentAim and the fire gate take the pose angle from reticleAimAngle, which solves it from the MUZZLE (theta = angle(muzzle(theta) -> aim)),
+  // so the straight shot line passes through the reticle centre (it missed it by 27 px median / 52 px max when the angle came from the body centre).
+  // The projectile still leaves the registered muzzle along muzzle.angle. ?reticle=classic (page or shell address) restores everything.
+  const reticleClassic=(()=>{const off=value=>/(?:[?&])reticle=classic(?:&|$)/.test(String(value||""));try{if(off(location.search))return true;}catch{}try{if(off(window.top.location.search))return true;}catch{}return false;})();
+  // ---- RTL DRAW BEGIN (pure drawing: one state object in, pixels out; no runner access) ----
+  const RTL={ink:"rgba(3,6,13,.9)",white:"#ffffff",lock:"#ff4a5c",lockHi:"#ffe3e6",reload:"#ffb347",cover:"#9fe8ff",auto:"#ffe9a6",font:"Bahnschrift,'DIN Alternate','Roboto Condensed','Arial Narrow',ui-monospace,sans-serif"};
+  const RTL_GEOM=Object.freeze({gap:12.5,len:10.5,th:4.2,boxW:88,boxH:34,frameCapX:170,frameCapY:140,frameWinX:120,frameWinY:100});
+  const rtlRgb=hex=>{const n=parseInt(String(hex).slice(1,7),16)||0;return[(n>>16)&255,(n>>8)&255,n&255];};
+  const rtlMix=(a,b,t)=>{const A=rtlRgb(a),B=rtlRgb(b),k=Math.max(0,Math.min(1,t));return`rgb(${Math.round(A[0]+(B[0]-A[0])*k)},${Math.round(A[1]+(B[1]-A[1])*k)},${Math.round(A[2]+(B[2]-A[2])*k)})`;};
+  const rtlEase=t=>{const k=Math.max(0,Math.min(1,t));return k*k*(3-2*k);};
+  // Four detached rounded bars, a soft dark halo and a centre pip. Everything is outlined so it reads on white VFX and on black.
+  // On a lock the bars close in, turn red and rotate to an X; a charge pulls them in further; each shot kicks them outward.
+  function rtlCrosshair(ctx,s){
+    const u=s.u,r0=Math.max(4,s.gap-s.conv*3.2-s.lockT*2.6+s.spread)*u,r1=r0+s.len*u,w=s.th*u,color=s.color,rot=s.rot;
+    ctx.save();ctx.translate(s.x,s.y);ctx.globalAlpha=s.alpha;
+    const halo=ctx.createRadialGradient(0,0,r0*.45,0,0,r1*1.85);halo.addColorStop(0,"rgba(3,6,13,.38)");halo.addColorStop(.55,"rgba(3,6,13,.18)");halo.addColorStop(1,"rgba(3,6,13,0)");
+    ctx.fillStyle=halo;ctx.beginPath();ctx.arc(0,0,r1*1.85,0,Math.PI*2);ctx.fill();
+    ctx.lineCap="round";ctx.lineJoin="round";
+    for(let pass=0;pass<2;pass++){ctx.strokeStyle=pass?color:RTL.ink;ctx.lineWidth=pass?w:w+2.8*u;ctx.beginPath();
+      for(let k=0;k<4;k++){const a=rot+k*Math.PI/2,c=Math.cos(a),n=Math.sin(a);ctx.moveTo(c*r0,n*r0);ctx.lineTo(c*r1,n*r1);}ctx.stroke();}
+    ctx.fillStyle=RTL.ink;ctx.beginPath();ctx.arc(0,0,2.7*u,0,Math.PI*2);ctx.fill();ctx.fillStyle=s.lockT>.5?RTL.lockHi:RTL.white;ctx.beginPath();ctx.arc(0,0,1.55*u,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+  // Corner frame on the enemy under the aim; it is the enemy's real hit area, so what is framed is what a shot can hit.
+  // A box wider / taller than twice the cap (a boss) is cut to a smaller window around the crosshair, so the corners never run off to the screen edge.
+  function rtlLockFrame(ctx,b,s){
+    const u=s.u,t=rtlEase(s.lockIn),pad=(1-t)*16*u,capX=RTL_GEOM.frameCapX*u,capY=RTL_GEOM.frameCapY*u,winX=RTL_GEOM.frameWinX*u,winY=RTL_GEOM.frameWinY*u,cx=Math.max(b.x0,Math.min(b.x1,s.x)),cy=Math.max(b.y0,Math.min(b.y1,s.y));
+    let bx0=b.x0,bx1=b.x1,by0=b.y0,by1=b.y1;
+    if(bx1-bx0>2*capX){bx0=Math.max(bx0,cx-winX);bx1=Math.min(bx1,cx+winX);}
+    if(by1-by0>2*capY){by0=Math.max(by0,cy-winY);by1=Math.min(by1,cy+winY);}
+    const x0=bx0-pad,y0=by0-pad,x1=bx1+pad,y1=by1+pad,w=x1-x0,h=y1-y0,a=Math.max(9*u,Math.min(30*u,Math.min(w,h)*.2));
+    ctx.save();ctx.globalAlpha=s.alpha*(.3+.7*t);ctx.lineCap="butt";ctx.lineJoin="miter";
+    ctx.lineWidth=1;ctx.strokeStyle="rgba(255,255,255,.2)";ctx.strokeRect(x0+.5,y0+.5,w-1,h-1);
+    for(let pass=0;pass<2;pass++){ctx.lineWidth=pass?2.4*u:5*u;ctx.strokeStyle=pass?s.frameColor:RTL.ink;ctx.beginPath();
+      ctx.moveTo(x0,y0+a);ctx.lineTo(x0,y0);ctx.lineTo(x0+a,y0);ctx.moveTo(x1-a,y0);ctx.lineTo(x1,y0);ctx.lineTo(x1,y0+a);
+      ctx.moveTo(x1,y1-a);ctx.lineTo(x1,y1);ctx.lineTo(x1-a,y1);ctx.moveTo(x0+a,y1);ctx.lineTo(x0,y1);ctx.lineTo(x0,y1-a);ctx.stroke();}
+    ctx.restore();
+  }
+  // Ring gauge around the crosshair: charge / spin-up (clockwise from the top) or reload progress. The label sits on the side
+  // that is away from the magazine box.
+  function rtlRing(ctx,s){
+    const r=s.ring,u=s.u,rad=(s.gap+s.len+10)*u,a0=-Math.PI/2,a1=a0+Math.PI*2*Math.max(0,Math.min(1,r.ratio)),side=s.boxSide<0?1:-1;
+    ctx.save();ctx.translate(s.x,s.y);ctx.globalAlpha=s.alpha;ctx.lineCap="round";
+    ctx.lineWidth=5.6*u;ctx.strokeStyle=RTL.ink;ctx.globalAlpha=s.alpha*.5;ctx.beginPath();ctx.arc(0,0,rad,0,Math.PI*2);ctx.stroke();
+    ctx.globalAlpha=s.alpha;ctx.lineWidth=1.4*u;ctx.strokeStyle="rgba(255,255,255,.2)";ctx.beginPath();ctx.arc(0,0,rad,0,Math.PI*2);ctx.stroke();
+    if(r.ratio>0.004){ctx.lineWidth=5.6*u;ctx.strokeStyle=RTL.ink;ctx.beginPath();ctx.arc(0,0,rad,a0,a1);ctx.stroke();ctx.lineWidth=3*u;ctx.strokeStyle=r.full&&s.blink?RTL.white:r.color;ctx.beginPath();ctx.arc(0,0,rad,a0,a1);ctx.stroke();}
+    if(r.label){ctx.font=`800 ${13*u}px ${RTL.font}`;ctx.textAlign=side>0?"left":"right";ctx.textBaseline="middle";ctx.lineWidth=3.2*u;ctx.strokeStyle=RTL.ink;ctx.lineJoin="round";ctx.strokeText(r.label,side*(rad+8*u),0);ctx.fillStyle=r.full&&s.blink?RTL.white:r.color;ctx.fillText(r.label,side*(rad+8*u),0);}
+    ctx.restore();
+  }
+  // Hit burst: four ticks on the diagonals between the bars (the bars are on the axes, or on the diagonals while locked).
+  function rtlHitMark(ctx,s){
+    const h=s.hit,u=s.u,f=1-h.age/h.life,pop=1+.35*(1-f),r0=(h.heavy?9:8)*u*pop,r1=r0+(h.heavy?13:9)*u,col=h.heavy?"#ff6a4d":RTL.white;
+    ctx.save();ctx.translate(s.x,s.y);ctx.globalAlpha=s.alpha*Math.min(1,f*1.4);ctx.lineCap="round";
+    for(let pass=0;pass<2;pass++){ctx.strokeStyle=pass?col:RTL.ink;ctx.lineWidth=(pass?(h.heavy?3.2:2.6):(h.heavy?6:5.2))*u;ctx.beginPath();
+      for(let k=0;k<4;k++){const a=s.rot+Math.PI/4+k*Math.PI/2,c=Math.cos(a),n=Math.sin(a);ctx.moveTo(c*r0,n*r0);ctx.lineTo(c*r1,n*r1);}ctx.stroke();}
+    ctx.restore();
+  }
+  // Thin guide lines across the whole view with a gap at the aim (NIKKE style), faint so they never fight the picture.
+  function rtlGuides(ctx,s){
+    const gap=(s.gap+s.len+16)*s.u,x=Math.round(s.x)+.5,y=Math.round(s.y)+.5;
+    ctx.save();ctx.lineCap="butt";
+    for(let pass=0;pass<2;pass++){ctx.globalAlpha=(pass?s.guideAlpha:s.guideAlpha*.45)*s.alpha;ctx.strokeStyle=pass?"#ffffff":RTL.ink;ctx.lineWidth=pass?1:3;ctx.beginPath();
+      ctx.moveTo(s.view[0],y);ctx.lineTo(s.x-gap,y);ctx.moveTo(s.x+gap,y);ctx.lineTo(s.view[1],y);ctx.moveTo(x,s.rows.top);ctx.lineTo(x,s.y-gap);ctx.moveTo(x,s.y+gap);ctx.lineTo(x,s.rows.bottom);ctx.stroke();}
+    ctx.restore();
+  }
+  // Magazine readout: 3-digit count, /magazine, round bar above; red when low, amber while reloading.
+  function rtlAmmoBox(ctx,s){
+    const u=s.u,bw=RTL_GEOM.boxW*u,bh=RTL_GEOM.boxH*u,cut=8*u,gapX=(s.gap+s.len+18)*u,right=s.boxSide<0?s.x-gapX:s.x+gapX+bw,left=right-bw,top=s.y-bh/2,warn=s.reloading?RTL.reload:(s.low?RTL.lock:"rgba(255,255,255,.62)");
+    ctx.save();ctx.globalAlpha=s.alpha;
+    ctx.beginPath();ctx.moveTo(left+cut,top);ctx.lineTo(right,top);ctx.lineTo(right,top+bh-cut);ctx.lineTo(right-cut,top+bh);ctx.lineTo(left,top+bh);ctx.lineTo(left,top+cut);ctx.closePath();
+    const fill=ctx.createLinearGradient(0,top,0,top+bh);fill.addColorStop(0,"rgba(6,10,19,.86)");fill.addColorStop(1,"rgba(4,7,14,.74)");ctx.fillStyle=fill;ctx.fill();
+    ctx.lineWidth=1.5*u;ctx.strokeStyle=warn;if(!((s.low||s.reloading)&&!s.blink))ctx.stroke();
+    ctx.fillStyle=s.accent;ctx.fillRect(left+cut*.55,top+bh*.5-7*u,2.6*u,14*u);
+    const barY=top-7*u,barH=3.4*u,mag=s.mag,filled=s.reloading?s.reloadProgress:s.ammo/mag;
+    ctx.fillStyle="rgba(3,6,13,.82)";ctx.fillRect(left-1,barY-1,bw+2,barH+2);
+    if(!s.reloading&&mag<=40){const gp=(mag>20?1:2)*u,seg=(bw-gp*(mag-1))/mag;for(let i=0;i<mag;i++){ctx.fillStyle=i<s.ammo?warn:"rgba(255,255,255,.16)";ctx.fillRect(left+i*(seg+gp),barY,Math.max(1,seg),barH);}}
+    else{ctx.fillStyle="rgba(255,255,255,.16)";ctx.fillRect(left,barY,bw,barH);ctx.fillStyle=warn;ctx.fillRect(left,barY,bw*Math.max(0,Math.min(1,filled)),barH);}
+    ctx.textBaseline="middle";ctx.lineJoin="round";
+    if(s.reloading){ctx.font=`800 ${13*u}px ${RTL.font}`;ctx.textAlign="center";ctx.fillStyle=RTL.reload;ctx.fillText("RELOAD",left+bw/2+3*u,s.y+1);}
+    else{ctx.font=`800 ${25*u}px ${RTL.font}`;ctx.textAlign="left";ctx.fillStyle=s.low?(s.empty&&!s.blink?"#ff9aa4":RTL.lock):RTL.white;ctx.fillText(String(s.ammo).padStart(3,"0"),left+11*u,s.y+1);
+      ctx.font=`700 ${10*u}px ${RTL.font}`;ctx.textAlign="right";ctx.fillStyle="rgba(226,236,255,.66)";ctx.fillText(`/${mag}`,right-6*u,s.y+8*u);}
+    if(s.tag){ctx.font=`800 ${9*u}px ${RTL.font}`;ctx.textAlign=s.boxSide<0?"right":"left";ctx.textBaseline="top";ctx.lineWidth=3*u;ctx.strokeStyle=RTL.ink;const tx=s.boxSide<0?right:left;ctx.strokeText(s.tag,tx,top+bh+4*u);ctx.fillStyle=s.tagColor;ctx.fillText(s.tag,tx,top+bh+4*u);}
+    ctx.restore();
+  }
+  function rtlDraw(ctx,s){
+    ctx.save();ctx.setTransform(...(s.base||[1,0,0,1,0,0]));
+    if(s.guides)rtlGuides(ctx,s);
+    if(s.box&&s.lockIn>0.01)rtlLockFrame(ctx,s.box,s);
+    if(s.ring)rtlRing(ctx,s);
+    rtlCrosshair(ctx,s);
+    if(s.hit)rtlHitMark(ctx,s);
+    rtlAmmoBox(ctx,s);
+    ctx.restore();
+  }
+  // ---- RTL DRAW END ----
+  // bar kick per shot (px of outward spread at unit scale) by weapon family (COMBAT_BALLISTICS_V1 families)
+  const RET_KICK=Object.freeze({
+    AFTERGLOW_VECTOR:4.5,
+    HARMONIC_BEAM:4,
+    FORGE_OVERDRIVE:7,
+    R0_RELAY_CARBINE:5,
+    VANGUARD_RAIL:5,
+    THREAD_PROJECTOR:3.5,
+    VALE_ADJUDICATOR:6.5,
+    HUSH_SEEKER:3.5,
+    ADJUDICATOR_NEEDLE:5,
+    FIELD_SURVEYOR:4,
+    FIELD_SEEKER:4,
+    VANGUARD_PULSE:5,
+    ANALOG_HUNTER:8,
+    MODULAR_DRONE:3,
+    BASTION_ROTARY:5,
+    CUSTODY_BREACH:8,
+    SEAL_PROJECTOR:5,
+    FOUNDRY_WALL:4.5,
+    FOUNDRY_HEAVY:6.5,
+    CROSS_SEAL_PROJECTOR:6.5,
+    PHASE_ANCHOR:5.5,
+    VEGA_FOUNDRY_HEAVY:9,
+    ANCHOR_PLATE:6,
+    CHOIR_EMITTER:4
+  });
+  const RET_KICK_DEFAULT=5;
+  CommonCombatRunner.prototype.reticleKickFor=function(player){
+    const id=player?.spec?.id,cache=this.__afRetKick||(this.__afRetKick=new Map());if(cache.has(id))return cache.get(id);
+    let family=null;try{family=window.AfterSignalBallistics?.profileFor?.(player.spec)?.family||null;}catch{}
+    const value=RET_KICK[family]??RET_KICK_DEFAULT;cache.set(id,value);return value;
+  };
+  // Muzzle point of the authored pose position `position` (0..frames-1): the same interpolation presentAim uses for the shot origin.
+  CommonCombatRunner.prototype.reticleMuzzleAt=function(player,position){
+    const clips=player?.spec?.combatClips||{},frames=clips.FIRE_DIRECTIONAL_FRAMES||[];if(!frames.length)return null;
+    const at=clamp(position,0,frames.length-1),lower=Math.floor(at),upper=Math.min(frames.length-1,lower+1),blend=lower===upper?0:smooth01(at-lower);
+    const point=index=>{const source=frames[index],anchor=this.poseAnchorFor(player,source),registered=clips.FIRE_DIRECTIONAL_MUZZLES?.[index];return this.posePointToWorld(player,source,null,{x:registered?.[0]??anchor.muzzleX,y:registered?.[1]??anchor.muzzleY,mirror:Boolean(clips.FIRE_DIRECTIONAL_MIRROR?.[index])});};
+    const a=point(lower),b=point(upper);return a&&b?{x:mix(a.x,b.x,blend),y:mix(a.y,b.y,blend)}:(a||b||null);
+  };
+  // Pose angle for an aim point: raw = angle from the body centre (the old rule). The shot leaves the muzzle, not the body centre, so iterate
+  // theta <- angle(muzzle(theta) -> aim); the fixed point is the angle whose shot line passes through the aim point. Aim points closer than ~40 px to
+  // the muzzle keep the body-centre angle (the direction from a point that close is meaningless), with a smooth blend up to ~130 px.
+  CommonCombatRunner.prototype.reticleAimAngle=function(player,target,raw){
+    if(reticleClassic||!target)return raw;
+    // Below the body-centre line the old clamp(raw,-pi,0) turned every such aim point to the RIGHT (0), also a point at the lower left; keep the side.
+    if(raw>0)return raw>Math.PI/2?-Math.PI:0;
+    if(!(raw>=-Math.PI))return raw;
+    try{
+      const frames=player?.spec?.combatClips?.FIRE_DIRECTIONAL_FRAMES;if(!frames?.length)return raw;
+      const last=frames.length-1;let angle=raw;
+      for(let step=0;step<6;step++){
+        const muzzle=this.reticleMuzzleAt(player,(angle+Math.PI)/Math.PI*last);if(!muzzle)return raw;
+        const dx=target.x-muzzle.x,dy=target.y-muzzle.y;let next=Math.atan2(dy,dx);if(next>0)next=dx<0?-Math.PI:0;
+        const refined=mixAngle(raw,next,smooth01((Math.hypot(dx,dy)-40)/90));
+        if(Math.abs(refined-angle)<2e-4){angle=refined;break;}angle=refined;
+      }
+      return Number.isFinite(angle)?angle:raw;
+    }catch{return raw;}
+  };
+  // The enemy under the aim point = the one a shot at the reticle centre would hit: the real hit ellipse + the selected character's projectile padding.
+  CommonCombatRunner.prototype.reticleLockTarget=function(player,aim){
+    const spec=F.PROJECTILE_REGISTRY?.get?.(player?.spec?.projectileId),pad=Math.max(3,((spec?.trail?.width)||8)*1.2*(spec?.collisionScale??1));
+    for(const enemy of this.enemies){
+      if(enemy.alive===false||!(enemy.hp>0))continue;
+      const m=enemyVisualMetrics(this,enemy),rx=Math.max(enemy.radius||0,m.drawWidth*.38)+pad,ry=Math.max(enemy.radius||0,m.drawHeight*.43)+pad,dx=(aim.x-m.centerX)/rx,dy=(aim.y-m.centerY)/ry;
+      if(dx*dx+dy*dy<=1)return{enemy,box:{x0:m.centerX-rx,y0:m.centerY-ry,x1:m.centerX+rx,y1:m.centerY+ry}};
+    }
+    return null;
+  };
+  // Unit scale: 1 on screens where a logical px is >= 0.8 css px, up to 2 on phones, so the bars stay readable.
+  CommonCombatRunner.prototype.reticleScale=function(){
+    const now=performance.now(),cache=this.__afRetScale;if(cache&&now-cache.at<500)return cache.u;
+    let u=1;try{const rect=this.canvas.getBoundingClientRect(),ppl=rect.width/this.width;if(ppl>0)u=clamp(.8/ppl,1,2);}catch{}
+    this.__afRetScale={at:now,u};return u;
+  };
+  // Hide the OS cursor over the canvas while the reticle is the pointer. A watchdog hands it back when the reticle stops being drawn
+  // (battle over, paused, hidden tab: the frame loop may stop without a last call).
+  CommonCombatRunner.prototype.reticleCursor=function(hide){
+    const canvas=this.canvas;if(!canvas?.style)return;
+    if(hide){
+      if(this.__afRetCursor==null)this.__afRetCursor=canvas.style.cursor||"";
+      if(canvas.style.cursor!=="none")canvas.style.cursor="none";
+      this.__afRetCursorAt=performance.now();
+      if(!this.__afRetCursorTimer)this.__afRetCursorTimer=setInterval(()=>{if(performance.now()-(this.__afRetCursorAt||0)>600){clearInterval(this.__afRetCursorTimer);this.__afRetCursorTimer=0;this.reticleCursor(false);}},300);
+    }else if(this.__afRetCursor!=null){canvas.style.cursor=this.__afRetCursor;this.__afRetCursor=null;}
+  };
+  // One frame: gather the state from the runner, then draw it with the pure drawing module. Returns true when drawn.
+  CommonCombatRunner.prototype.reticleDraw=function(ctx){
+    if(!this.running||this.terminalPaused)return false;
+    const player=this.selected?.();if(!player||player.member?.hp<=0)return false;
+    const aim=player.smoothedAim||this.pointer;if(!aim||!Number.isFinite(aim.x)||!Number.isFinite(aim.y))return false;
+    const now=performance.now(),camOn=this.cameraState?.().active===true,toScreen=point=>camOn?this.cameraToScreen(point):point,pos=toScreen(aim);
+    const ret=player.__afRet||(player.__afRet={t:now,lockIn:0,lockId:null,box:null,boxSide:-1,shotKey:player.lastShot?.shotId||null,kickAt:-1e9,kickAmp:0});
+    if(now-ret.t>400){ret.shotKey=player.lastShot?.shotId||null;ret.kickAt=-1e9;ret.lockIn=0;ret.lockId=null;}
+    const dt=clamp((now-ret.t)/1000,0,.1);ret.t=now;
+    const auto=Boolean(this.isAutoControlled?.(player)),cover=Boolean(player.coverRequested),ammo=Math.max(0,Math.round(player.ammo??0)),mag=Math.max(1,player.magazineSize||1),reloadClock=player.reloadClock||0,reloading=reloadClock>0,
+      low=!reloading&&ammo<=Math.max(1,Math.ceil(mag*.2)),empty=!reloading&&ammo<=0,blink=Math.sin(now/95)>0,alpha=cover?.45:auto?.72:1;
+    if(reloading){if(!(player.__afReloadTotal>=reloadClock))player.__afReloadTotal=reloadClock;}else player.__afReloadTotal=0;
+    const reloadProgress=reloading?clamp(1-reloadClock/Math.max(.05,player.__afReloadTotal||reloadClock),0,1):0;
+    // lock: closes in over ~0.1 s, re-snaps when the target changes, fades out over ~0.15 s
+    const found=cover?null:this.reticleLockTarget(player,aim),lockId=found?(found.enemy.id??found.enemy.spec?.id??"enemy"):null;
+    if(lockId!==ret.lockId){if(lockId!=null)ret.lockIn=Math.min(ret.lockIn,.3);ret.lockId=lockId;}
+    ret.lockIn+=((found?1:0)-ret.lockIn)*(1-Math.exp(-dt*(found?16:12)));if(!found&&ret.lockIn<.004)ret.lockIn=0;
+    if(found)ret.box=found.box;
+    const lockT=rtlEase(ret.lockIn);
+    // shot kick
+    const shotKey=player.lastShot?.shotId||null;
+    if(shotKey&&shotKey!==ret.shotKey){ret.shotKey=shotKey;ret.kickAt=now;ret.kickAmp=this.reticleKickFor(player);}
+    const spread=ret.kickAmp*Math.exp(-Math.max(0,now-ret.kickAt)/70);
+    // charge / spin-up ring (bars pull in with the charge) or reload ring
+    const profile=this.triggerProfile?.(player),clock=profile?.mode==="charge"?(player.__afChargeClock||0):profile?.mode==="spinup"?(player.__afSpinClock||0):0,accentRaw=hudAccent(player.spec),accent=/^#[0-9a-f]{6}$/i.test(String(accentRaw))?accentRaw:"#7cf3ff";
+    let ring=null,conv=0;
+    if(clock>0&&profile.full>0){const ratio=clamp(clock/profile.full,0,1),full=ratio>=1;conv=ratio;ring={ratio,color:rtlMix(accent,"#ffffff",.35),label:full?"MAX":`${Math.round(ratio*100)}%`,full};}
+    else if(reloading)ring={ratio:reloadProgress,color:RTL.reload,label:"",full:false};
+    // hit burst (the selected unit's own hits; set by the FOCUS_VIEW damage wrapper)
+    const hit=player.__afFocusHit,hitAge=hit?now-hit.at:1e9,hitState=hitAge<170?{age:hitAge,life:170,heavy:Boolean(hit.heavy)}:null;
+    const u=this.reticleScale(),view=this.hudVisibleRange?.()||[0,this.width],rows=this.focusVisibleRows?.()||{top:0,bottom:this.height};
+    // magazine box left of the crosshair; flips to the right near the left screen edge (with hysteresis)
+    const need=(RTL_GEOM.gap+RTL_GEOM.len+18+RTL_GEOM.boxW+8)*u;
+    if(ret.boxSide<0&&pos.x-need<view[0])ret.boxSide=1;else if(ret.boxSide>0&&pos.x-need>view[0]+70*u)ret.boxSide=-1;
+    let box=null;if(ret.box&&ret.lockIn>.01){const a=toScreen({x:ret.box.x0,y:ret.box.y0}),b=toScreen({x:ret.box.x1,y:ret.box.y1});box={x0:a.x,y0:a.y,x1:b.x,y1:b.y};}
+    const tag=cover?"COVER":auto?"AUTO":empty?"HOLD ▸ RELOAD":"",tagColor=cover?RTL.cover:empty?RTL.lock:RTL.auto;
+    const s={x:pos.x,y:pos.y,u,gap:RTL_GEOM.gap,len:RTL_GEOM.len,th:RTL_GEOM.th,spread,conv,lockT,lockIn:ret.lockIn,rot:lockT*Math.PI/4,color:lockT>.01?rtlMix(RTL.white,RTL.lock,lockT):RTL.white,frameColor:RTL.lock,alpha,
+      view,rows,guides:camOn,guideAlpha:.3,box,ring,hit:hitState,ammo,mag,low,empty,reloading,reloadProgress,blink,boxSide:ret.boxSide,tag,tagColor,accent};
+    ctx.save();ctx.globalCompositeOperation="source-over";ctx.globalAlpha=1;ctx.shadowBlur=0;
+    try{rtlDraw(ctx,s);}finally{ctx.restore();}
+    this.__afRetLast=s;return true;
+  };
+  CommonCombatRunner.prototype.reticleInfo=function(){
+    const s=this.__afRetLast;return s?{x:s.x,y:s.y,u:s.u,lockT:s.lockT,lockIn:s.lockIn,boxSide:s.boxSide,spread:s.spread,conv:s.conv,ring:s.ring,hit:Boolean(s.hit),tag:s.tag,guides:s.guides,box:s.box,cursorHidden:this.__afRetCursor!=null,classic:reticleClassic}:null;
+  };
+  const reticlePrevDraw=CommonCombatRunner.prototype.drawAimReticle;
+  CommonCombatRunner.prototype.drawAimReticle=function(ctx,...args){
+    if(reticleClassic||!hudEnabled)return reticlePrevDraw.call(this,ctx,...args);
+    let drawn=null;
+    try{drawn=this.reticleDraw(ctx);}catch(error){this.qa.reticleErrors=(this.qa.reticleErrors||0)+1;drawn=null;}
+    if(drawn===null){this.reticleCursor(false);return reticlePrevDraw.call(this,ctx,...args);}
+    const player=this.selected?.();this.reticleCursor(drawn===true&&Boolean(player)&&!this.isAutoControlled?.(player));
+  };
+  window.AfterSignalReticle=Object.freeze({version:"COMBAT_RETICLE_V2",classic:reticleClassic,geometry:RTL_GEOM,kick:RET_KICK,colors:RTL,draw:rtlDraw});
+  // <<< COMBAT_RETICLE_V2
   window.AfterSignalCommonCombatRuntime=Object.freeze({version:"1.0.0-candidate",mount:options=>{document.querySelector("#af-orientation-gate")?.remove();const runner=new CommonCombatRunner(options),resize=()=>runner.syncResponsiveLayout(),dispose=()=>runner.dispose("pagehide");currentRunner=runner;resize();runner.start();runner.schedule(resize,0);runner.listen(window,"resize",resize);runner.listen(window,"orientationchange",resize);runner.listen(window,"pagehide",dispose,{once:true});runner.listen(window,"beforeunload",dispose,{once:true});window.__AF_COMMON_COMBAT_RUNNER__=runner;window.__AF_ACTIVE_RUNNER__=runner;return runner;},active:()=>currentRunner,configureParty:(stageId,characterIds)=>{const stage=F.STAGE_REGISTRY.get(stageId);if(!stage)throw new Error(`Unknown stage ${stageId}`);const loadout=new F.PartyLoadout({id:stage.deployment?.partyId||stageId,characterIds,availableCharacterIds:stage.deployment?.availableCharacterIds||stage.deployment?.slots||[]});return F.PartyLoadout.saveForStage(stageId,loadout);},clearParty:(stageId)=>{try{localStorage.removeItem(F.PartyLoadout.storageKey(stageId));}catch{}return true;}});
   addEventListener("load",()=>{if(document.body?.dataset.afCommonCombatRuntime==="v1")window.AfterSignalCommonCombatRuntime.mount();},{once:true});
 })();
